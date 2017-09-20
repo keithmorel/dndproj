@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>DnD Dice Roller</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+    </head>
+    <body>
+        <div>
+            <div class="header">
+                <h2>DnD Multiple Dice Roller</h2>
+            </div>
+            <div class="content">
+                <table>
+                    <tr>
+                        <th>Die to Roll</th>
+                        <th>Number of Dice</th>
+                        <th>Result</th>
+                        <th>Roll!</th>
+                    </tr>
+                    <tr>
+                        <td>D4</td>
+                        <td>1</td>
+                        <td>{{d4}}</td>
+                        <td>
+                            <form action="/d4/" method="post">
+                                <button name="rolld4" type="submit">Roll!</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>D6</td>
+                        <td>1</td>
+                        <td>{{d6}}</td>
+                        <td>
+                            <form action="/d6/" method="post">
+                                <button name="rolld6" type="submit">Roll!</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>D8</td>
+                        <td>1</td>
+                        <td>{{d8}}</td>
+                        <td>
+                            <form action="/d8/" method="post">
+                                <button name="rolld8" type="submit">Roll!</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>D10</td>
+                        <td>1</td>
+                        <td>{{d10}}</td>
+                        <td>
+                            <form action="/d10/" method="post">
+                                <button name="rolld10" type="submit">Roll!</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>D20</td>
+                        <td>1</td>
+                        <td>{{d20}}</td>
+                        <td>
+                            <form action="/d20/" method="post">
+                                <button name="rolld20" type="submit">Roll!</button>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
+
