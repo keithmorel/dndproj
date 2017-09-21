@@ -8,66 +8,67 @@
         <div>
             <div class="header">
                 <h2>DnD Multiple Dice Roller</h2>
+                <ul>
+                    <li><a href="{{ url_for('all_dice') }}"<button>Roll Dice</a></li>
+                    <li><a href="{{ url_for('mkchar') }}"<button>Character Sheet</button></a></li>
+                </ul>
             </div>
             <div class="content">
                 <table>
-                    <tr>
-                        <th>Die to Roll</th>
-                        <th>Number of Dice</th>
-                        <th>Result</th>
-                        <th>Roll!</th>
-                    </tr>
-                    <tr>
-                        <td>D4</td>
-                        <td>1</td>
-                        <td>{{d4}}</td>
-                        <td>
-                            <form action="/d4/" method="post">
-                                <button name="rolld4" type="submit">Roll!</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>D6</td>
-                        <td>1</td>
-                        <td>{{d6}}</td>
-                        <td>
-                            <form action="/d6/" method="post">
-                                <button name="rolld6" type="submit">Roll!</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>D8</td>
-                        <td>1</td>
-                        <td>{{d8}}</td>
-                        <td>
-                            <form action="/d8/" method="post">
-                                <button name="rolld8" type="submit">Roll!</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>D10</td>
-                        <td>1</td>
-                        <td>{{d10}}</td>
-                        <td>
-                            <form action="/d10/" method="post">
-                                <button name="rolld10" type="submit">Roll!</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>D20</td>
-                        <td>1</td>
-                        <td>{{d20}}</td>
-                        <td>
-                            <form action="/d20/" method="post">
-                                <button name="rolld20" type="submit">Roll!</button>
-                            </form>
-                        </td>
-                    </tr>
-                </table>
+                    <form action="/roll_all/" method="POST">
+                        <tr>
+                            <th>Die to Roll</th>
+                            <th>Number of Dice</th>
+                            <th>Modifier</th>
+                            <th>List of Rolls</th>
+                            <th>+/-</th>
+                            <th>Row Total</th>
+                        </tr>
+                        <tr>
+                            <td>D4</td>
+                            <td><input type="number" name="d4_rolls" min="0"></td>
+                            <td><input type="number" name="d4_mod"></td>
+                            <td>{{rolls_d4}}</td>
+                            <td>{{mod_d4}}</td>
+                            <td>{{d4_tot}}</td>
+                        </tr>
+                        <tr>
+                             <td>D6</td>
+                            <td><input type="number" name="d6_rolls" min="0"></td>
+                            <td><input type="number" name="d6_mod"></td>
+                            <td>{{rolls_d6}}</td>
+                            <td>{{mod_d6}}</td>
+                            <td>{{d6_tot}}</td>
+                        </tr>
+                        <tr>
+                            <td>D8</td>
+                            <td><input type="number" name="d8_rolls" min="0"></td>
+                            <td><input type="number" name="d8_mod"></td>
+                            <td>{{rolls_d8}}</td>
+                            <td>{{mod_d8}}</td>
+                            <td>{{d8_tot}}</td>
+                        </tr>
+                        <tr>
+                            <td>D10</td>
+                            <td><input type="number" name="d10_rolls" min="0"></td>
+                            <td><input type="number" name="d10_mod"></td>
+                            <td>{{rolls_d10}}</td>
+                            <td>{{mod_d10}}</td>
+                            <td>{{d10_tot}}</td>
+                        </tr>
+                        <tr>
+                            <td>D20</td>
+                            <td><input type="number" name="d20_rolls" min="0"></td>
+                            <td><input type="number" name="d20_mod"></td>
+                            <td>{{rolls_d20}}</td>
+                            <td>{{mod_d20}}</td>
+                            <td>{{d20_tot}}</td>
+                        </tr>
+                        <tr>
+                            <td><button onclick="location.reload()">Reset</button></td>
+                            <td><input value="Roll Dice!"type="submit"></td>
+                            <td>Final Result: {{result}}</td>
+                        </tr>
             </div>
         </div>
     </body>
