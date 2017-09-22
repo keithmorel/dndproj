@@ -3,8 +3,24 @@
     padding: 0;
 }
 h2 {
+    text-align: center;
     border-bottom: 5px solid black;
     font-weight: bold;
+}
+
+ul {
+    list-style-type: none;
+    border: 1px solid #e7e7e7;
+    background-color: #f3f3f3;
+}
+li {
+    display: inline;
+}
+
+li a {
+    text-align: center;
+    text-decoration: none;
+    color: #666;
 }
 
 th {
@@ -16,4 +32,8 @@ th {
 th, td {
     padding: 15px;
     text-align: center;
+}
+.centered {
+    margin-left: auto;
+    margin-right: auto;
 }

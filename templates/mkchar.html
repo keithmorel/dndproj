@@ -2,19 +2,47 @@
 <html>
     <head>
         <title>Character Sheet</title>
-        <link rel="stylesheet" href="static/main.css" type="text/css"/>
+        <link rel="stylesheet" href="static/style.css?{% print("3424") %}"/>
     </head>
     <body>
         <div>
             <div class="header"></div>
-                <h1>Character Sheet</h1>
+                <h2>Character Sheet</h2>
                 <ul>
-                    <li><a href="{{ url_for('all_dice') }}"><button>Roll Dice</button></a></li>
-                    <li><a href="{{ url_for('mkchar') }}"><button>Character Sheet</button></a></li>
+                    <li><a href="{{ url_for('all_dice') }}">Roll Dice</a></li>
+                    <li><a href="{{ url_for('mkchar') }}">Character Sheet</a></li>
                 </ul>
             <div class="content"></div>
                 <form>
-                    <p>Name Character:</p>
+                    Character Name: <input type="text"></input><br>
+                    Class: <input type="text"></input><br>
+                    Level: <input type="number" min="1" value="1"></input><br>
+                    Alignment: <br>
+                    <input type="radio" name="alignment" value="lawful_good">Lawful Good<br>
+                    <input type="radio" name="alignment" value="neutral_good">Neutral Good<br>
+                    <input type="radio" name="alignment" value="chaotic_good">Chaotic Good<br>
+                    <input type="radio" name="alignment" value="lawful_neutral">Lawful Neutral<br>
+                    <input type="radio" name="alignment" value="neutral">Neutral<br>
+                    <input type="radio" name="alignment" value="chaotic_neutral">Chaotic Neutral<br>
+                    <input type="radio" name="alignment" value="lawful_evil">Lawful Evil<br>
+                    <input type="radio" name="alignment" value="neutral_evil">Neutral Evil<br>
+                    <input type="radio" name="alignment" value="chaotic_evil">Chaotic Evil<br>
+                    Health: <input type="number" min="0"> / <input type="number"><br>
+                    Armor: <input type="number" min="0"></input><br>
+                    Strength: <input type="number" value="11"></input><br>
+                    Dexterity: <input type="number" value="11"></input><br>
+                    Constitution: <input type="number" value="11"></input><br>
+                    Intelligence: <input type="number" value="11"></input><br>
+                    Wisdom: <input type="number" value="11"></input><br>
+                    Charisma: <input type="number" value="11"></input><br>
+                    Perception: <input type="number" value="11"></input><br>
+                    Weapons: 
+                    <textarea rows="5" cols="25"></textarea><br>
+                    Skills: 
+                    <textarea rows="10" cols="25"></textarea><br>
+                    Items: 
+                    <textarea rows="10" cols="50"></textarea><br>
+                    <input type="submit"></input>
                 </form>
             <div class="footer"></div>
         </div>

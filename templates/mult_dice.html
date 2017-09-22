@@ -2,15 +2,16 @@
 <html>
     <head>
         <title>DnD Dice Roller</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+        <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css{% print("838383") %}') }}"/> -->
+        <link rel="stylesheet" href="static/style.css?{% print("3424") %}"/>
     </head>
     <body>
         <div>
             <div class="header">
                 <h2>DnD Multiple Dice Roller</h2>
                 <ul>
-                    <li><a href="{{ url_for('all_dice') }}"<button>Roll Dice</a></li>
-                    <li><a href="{{ url_for('mkchar') }}"<button>Character Sheet</button></a></li>
+                    <li><a href="{{ url_for('all_dice') }}" class="active">Roll Dice</a></li>
+                    <li><a href="{{ url_for('mkchar') }}">Character Sheet</a></li>
                 </ul>
             </div>
             <div class="content">
@@ -26,50 +27,51 @@
                         </tr>
                         <tr>
                             <td>D4</td>
-                            <td><input type="number" name="d4_rolls" min="0"></td>
-                            <td><input type="number" name="d4_mod"></td>
+                            <td><input type="number" name="d4_rolls" min="0" value="0" style="width: 3em;"></td>
+                            <td><input type="number" name="d4_mod" value="0" style="width: 3em;"></td>
                             <td>{{rolls_d4}}</td>
                             <td>{{mod_d4}}</td>
                             <td>{{d4_tot}}</td>
                         </tr>
                         <tr>
                              <td>D6</td>
-                            <td><input type="number" name="d6_rolls" min="0"></td>
-                            <td><input type="number" name="d6_mod"></td>
+                            <td><input type="number" name="d6_rolls" min="0" value="0" style="width: 3em;"></td>
+                            <td><input type="number" name="d6_mod" value="0" style="width: 3em;"></td>
                             <td>{{rolls_d6}}</td>
                             <td>{{mod_d6}}</td>
                             <td>{{d6_tot}}</td>
                         </tr>
                         <tr>
                             <td>D8</td>
-                            <td><input type="number" name="d8_rolls" min="0"></td>
-                            <td><input type="number" name="d8_mod"></td>
+                            <td><input type="number" name="d8_rolls" min="0" value="0" style="width: 3em;"></td>
+                            <td><input type="number" name="d8_mod" value="0" style="width: 3em;"></td>
                             <td>{{rolls_d8}}</td>
                             <td>{{mod_d8}}</td>
                             <td>{{d8_tot}}</td>
                         </tr>
                         <tr>
                             <td>D10</td>
-                            <td><input type="number" name="d10_rolls" min="0"></td>
-                            <td><input type="number" name="d10_mod"></td>
+                            <td><input type="number" name="d10_rolls" min="0" value="0" style="width: 3em;"></td>
+                            <td><input type="number" name="d10_mod" value="0" style="width: 3em;"></td>
                             <td>{{rolls_d10}}</td>
                             <td>{{mod_d10}}</td>
                             <td>{{d10_tot}}</td>
                         </tr>
                         <tr>
                             <td>D20</td>
-                            <td><input type="number" name="d20_rolls" min="0"></td>
-                            <td><input type="number" name="d20_mod"></td>
+                            <td><input type="number" name="d20_rolls" min="0" value="0" style="width: 3em;"></td>
+                            <td><input type="number" name="d20_mod" value="0" style="width: 3em;"></td>
                             <td>{{rolls_d20}}</td>
                             <td>{{mod_d20}}</td>
                             <td>{{d20_tot}}</td>
                         </tr>
                         <tr>
-                            <td><button onclick="location.reload()">Reset</button></td>
-                            <td><input value="Roll Dice!"type="submit"></td>
-                            <td>Final Result: {{result}}</td>
+                            <td colspan="2"><button onclick="location.reload()">Reset</button></td>
+                            <td colspan="2"><input value="Roll Dice!"type="submit"></td>
+                            <td colspan="2">Final Result: {{result}}</td>
                         </tr>
             </div>
+            <p>If you want to roll a die not in this list, add a / to the url, then whatever sided die you want to roll! It will bring you to a new page where it will roll that number die as many times as you want!</p>
         </div>
     </body>
 </html>

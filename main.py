@@ -9,6 +9,16 @@ def all_dice():
     rolls_d8 = []
     rolls_d10 = []
     rolls_d20 = []
+    mod_d4 = 0
+    mod_d6 = 0
+    mod_d8 = 0
+    mod_d10 = 0
+    mod_d20 = 0
+    d4_tot = 0
+    d6_tot = 0
+    d8_tot = 0
+    d10_tot = 0
+    d20_tot = 0
     list_rolls = []
     result = 0
     return render_template('./mult_dice.html', **locals())
