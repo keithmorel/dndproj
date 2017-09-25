@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, session, abort, redirect, Response, url_for
-from flask.ext.login import LoginManager, UserMixin, login_required, login_user, logout_user
+from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
 app = Flask(__name__)
 import random
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -12,15 +14,20 @@ app.config.update(
         SECRET_KEY = 'secret'
 )
 
+class LoginForm(FlaskForm):
+    username = StringField('Username')
+    password = PasswordField('Password')
+    submit = SubmitField('Submit')
+
 class User(UserMixin):
 
     def __init__(self, id):
         self.id = id
-        self.name = "User_" + str(id)
-        self.password = self.name + "_pwd"
+        self.username = "User_" + str(id)
+        self.password = self.username + "_pwd"
 
     def __repr__(self):
-        return "%d/%s/%s" % (self.id, self.name, self.password)
+        return "%d/%s/%s" % (self.id, self.username, self.password)
 
 users = [User(id) for id in range(1,21)]
 
@@ -28,12 +35,13 @@ users = [User(id) for id in range(1,21)]
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        user = User(id)
         login_user(user)
-        flask.flash('Logged in successfully.')
-        next = flask.request.args.get('next')
+        flash('Logged in successfully.')
+        next = request.args.get('next')
         if not is_safe_url(next):
-            return flask.abort(400)
-        return flask.redirect(url_for('mkchar'))
+            return abort(400)
+        return redirect(url_for('mkchar'))
     return render_template('login.html', form=form)
 
 @app.route("/logout")
@@ -43,7 +51,7 @@ def logout():
     return redirect("/")
 
 @login_manager.user_loader
-def loas_user(userid):
+def load_user(userid):
     return User(userid)
 
 @app.route('/')
