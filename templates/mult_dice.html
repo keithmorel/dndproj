@@ -12,6 +12,11 @@
                 <ul>
                     <li><a href="{{ url_for('all_dice') }}" class="active">Roll Dice</a></li>
                     <li><a href="{{ url_for('mkchar') }}">Character Sheet</a></li>
+                    <li><a href="{{ url_for('login')}}">Login</a></li>
+                    <li><a href="{{ url_for('logout')}}">Logout</a></li>
+                    <li>{% if current_user.is_authenticated %}
+                        Logged in as: {{current_user.name}}
+                        {% endif %}
                 </ul>
             </div>
             <div class="content">

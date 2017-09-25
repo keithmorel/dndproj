@@ -1,6 +1,50 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, abort, redirect, Response, url_for
+from flask.ext.login import LoginManager, UserMixin, login_required, login_user, logout_user
 app = Flask(__name__)
 import random
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+app.config.update(
+        DEBUG = True,
+        SECRET_KEY = 'secret'
+)
+
+class User(UserMixin):
+
+    def __init__(self, id):
+        self.id = id
+        self.name = "User_" + str(id)
+        self.password = self.name + "_pwd"
+
+    def __repr__(self):
+        return "%d/%s/%s" % (self.id, self.name, self.password)
+
+users = [User(id) for id in range(1,21)]
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        login_user(user)
+        flask.flash('Logged in successfully.')
+        next = flask.request.args.get('next')
+        if not is_safe_url(next):
+            return flask.abort(400)
+        return flask.redirect(url_for('mkchar'))
+    return render_template('login.html', form=form)
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
+
+@login_manager.user_loader
+def loas_user(userid):
+    return User(userid)
 
 @app.route('/')
 #""" Default home page with all information filled in as blanks, showing you how the information is formatted. """
@@ -123,32 +167,28 @@ def roll_all():
             #""" Need to explicitly go through each index since the dice are not in any order or pattern. """
             if int(mods[0]) > 0:
                 mod_d4 = str('+'+ str(mods[0]))
-            else:
-		mod_d4 = str(mods[0])
+            mod_d4 = str(mods[0])
         elif l == 1:
             if int(mods[1]) > 0:
                 mod_d6 = str('+'+ str(mods[1]))
-            else:
-		mod_d6 = str(mods[1])
+            mod_d6 = str(mods[1])
         elif l == 2:
             if int(mods[2]) > 0:
                 mod_d8 = str('+' + str(mods[2]))
-            else:
-		mod_d8 = str(mods[2])
+            mod_d8 = str(mods[2])
         elif l == 3:
             if int(mods[3]) > 0:
                 mod_d10 = str('+' + str(mods[3]))
-            else:
-		mod_d10 = str(mods[3])
+            mod_d10 = str(mods[3])
         else:
             if int(mods[4]) > 0:
                 mod_d20 = str('+' + str(mods[4]))
-            else:
-		mod_d20 = str(mods[4])
+            mod_d20 = str(mods[4])
 
     return render_template('./mult_dice.html', **locals())
 
 @app.route("/mkchar")
+@login_required
 #""" Route to basic character design sheet creation, not fully implemented until user system up and running so users are able to save their characters to a database for future viewing/editing/deleting/etc. """
 def mkchar():
     return render_template('./mkchar.html', **locals())
