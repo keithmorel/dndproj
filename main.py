@@ -4,15 +4,11 @@ app = Flask(__name__)
 import random
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
+import os
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
-
-app.config.update(
-        DEBUG = True,
-        SECRET_KEY = 'secret'
-)
 
 class LoginForm(FlaskForm):
     username = StringField('Username')
@@ -200,3 +196,7 @@ def roll_all():
 #""" Route to basic character design sheet creation, not fully implemented until user system up and running so users are able to save their characters to a database for future viewing/editing/deleting/etc. """
 def mkchar():
     return render_template('./mkchar.html', **locals())
+
+if __name__ == "__main__":
+    app.secret_key = os.urandom(12)
+    app.run(debug=True, host='127.0.0.1', port=5000)
