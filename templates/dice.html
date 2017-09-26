@@ -9,13 +9,14 @@
             <div class="header"></div>
             <h2>Arbitrary Die Roller</h2>
                 <ul>
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
                     <li><a href="{{ url_for('all_dice') }}">Roll Dice</a></li>
                     <li><a href="{{ url_for('mkchar') }}">Character Sheet</a></li>
                 </ul>
             <div class="content"></div>
-                <br><br><br><br><br>
+            <h3 class="centered">Currently Rolling a D{% print(sides) %}</h3>
                 <h3 class="centered">{% print(roll) %}</h3>
-                <button class="centered" type="button" onclick="location.reload()">Roll Again</button>
+                <button type="button" onclick="location.reload()">Roll Again</button>
             <div class="footer"></div>
         </div>
     </body>

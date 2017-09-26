@@ -10,6 +10,7 @@
             <div class="header">
                 <h2>DnD Multiple Dice Roller</h2>
                 <ul>
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
                     <li><a href="{{ url_for('all_dice') }}" class="active">Roll Dice</a></li>
                     <li><a href="{{ url_for('mkchar') }}">Character Sheet</a></li>
                     <li><a href="{{ url_for('login')}}">Login</a></li>
@@ -75,6 +76,7 @@
                             <td colspan="2"><input value="Roll Dice!"type="submit"></td>
                             <td colspan="2">Final Result: {{result}}</td>
                         </tr>
+                    </form>
             </div>
             <p>If you want to roll a die not in this list, add a / to the url, then whatever sided die you want to roll! It will bring you to a new page where it will roll that number die as many times as you want!</p>
         </div>

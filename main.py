@@ -10,6 +10,10 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
+@app.route('/')
+def index():
+    return render_template('./home.html', **locals())
+
 class LoginForm(FlaskForm):
     username = StringField('Username')
     password = PasswordField('Password')
@@ -50,7 +54,7 @@ def logout():
 def load_user(userid):
     return User(userid)
 
-@app.route('/')
+@app.route('/roll')
 #""" Default home page with all information filled in as blanks, showing you how the information is formatted. """
 def all_dice():
     rolls_d4 = []    #""" Lists of accumulated rolls for all the different dice """
@@ -71,7 +75,7 @@ def all_dice():
     result = 0    #""" Final result that appears at the bottom right of the table """
     return render_template('./mult_dice.html', **locals())
 
-@app.route('/<sides>')
+@app.route('/<sides>') 
 #""" Simple page that rolls an arbitrary-sided die: 36-sided, 27-sided, 378-sided, etc. """
 def arb_sides(sides):
     roll = random.randint(1, int(sides))
@@ -192,7 +196,7 @@ def roll_all():
     return render_template('./mult_dice.html', **locals())
 
 @app.route("/mkchar")
-@login_required
+#@login_required
 #""" Route to basic character design sheet creation, not fully implemented until user system up and running so users are able to save their characters to a database for future viewing/editing/deleting/etc. """
 def mkchar():
     return render_template('./mkchar.html', **locals())
