@@ -208,7 +208,13 @@ def roll_all():
         mod_dx = str(mods[5])
 
     # For aesthetic purposes only
-    rolls_dx += ['D' + str(to_roll)]
+    rolls_d4 += [str(num_rolls[0]) + 'xD4']
+    rolls_d6 += [str(num_rolls[1]) + 'xD6']
+    rolls_d8 += [str(num_rolls[2]) + 'xD8']
+    rolls_d10 += [str(num_rolls[3]) + 'xD10']
+    rolls_d20 += [str(num_rolls[4]) + 'xD20']
+    rolls_dx += [str(num_rolls[5]) + 'D' + str(to_roll)]
+
 
     return render_template('./mult_dice.html', **locals())
 
