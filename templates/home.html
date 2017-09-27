@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>DnD Site</title>
-        <link rel="stylesheet" href="static/style.css?{% print("3424") %}"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
     </head>
     <body>
         <div>

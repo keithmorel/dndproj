@@ -62,16 +62,19 @@ def all_dice():
     rolls_d8 = []
     rolls_d10 = []
     rolls_d20 = []
+    rolls_dx = []
     mod_d4 = 0    #""" All the modifiers, + or -, that are added to the total of that dice's rolls, not each individual roll """
     mod_d6 = 0
     mod_d8 = 0
     mod_d10 = 0
     mod_d20 = 0
+    mod_dx = 0
     d4_tot = 0    #""" Accumulated totals of each row from the lists above, mostly just for the result calculation """
     d6_tot = 0
     d8_tot = 0
     d10_tot = 0
     d20_tot = 0
+    dx_tot = 0
     result = 0    #""" Final result that appears at the bottom right of the table """
     return render_template('./mult_dice.html', **locals())
 
@@ -90,25 +93,27 @@ def roll_all():
     num_rolls += [request.form.get('d8_rolls')]
     num_rolls += [request.form.get('d10_rolls')]
     num_rolls += [request.form.get('d20_rolls')]
+    num_rolls += [request.form.get('dx_rolls')]
     mods = []    #""" Initializing a list to store the modifiers that are added or subtracted to the totals of each row using a GET request, not to each individual roll. """
     mods += [request.form.get('d4_mod')]
     mods += [request.form.get('d6_mod')]
     mods += [request.form.get('d8_mod')]
     mods += [request.form.get('d10_mod')]
     mods += [request.form.get('d20_mod')]
-    for i in range(0,5):
+    mods += [request.form.get('dx_mod')]
+    for i in range(0,6):
         #""" Error checking of number of rolls:
         # If any of the rolls weren't filled out, don't roll them. This avoids TypeErrors with trying to add empty strings to integers. """
         if num_rolls[i] == '':
             num_rolls[i] = 0
-    for j in range(0,5):
+    for j in range(0,6):
         #""" Error checking of modifiers:
         # If any modifiers weren't filled out, don't add anything. This avoids TypeErrors with trying to add empty strings to integers. """
         if mods[j] == '':
             mods[j] = 0
     result = 0    #""" Initialize final result as 0, just in case nothing is filled out. """
     row_tots = []   # """ Initialize list to hold the row totals, which will be added together at the end to the final result. """
-    for x in range(0,5):
+    for x in range(0,6):
         #""" Since the dice chosen on this page are fixed and not in order, this is needed to be able to loop through the list of the number of rolls of each die and the modifiers for each die. e.g. [d4_rolls, d6_rolls, d8_rolls, d10_rolls, d20_rolls], and [d4_mod, d6_mod, d8_mod, d10_mod, d20_mod] """
         if x == 0:
             #''' D4 '''
@@ -154,7 +159,7 @@ def roll_all():
                 d10_tot += curr_roll
             d10_tot += int(mods[3])
             row_tots += [d10_tot]
-        else:
+        elif x == 4:
             #''' D20 '''
             rolls_d20 = []
             d20_tot = 0
@@ -165,33 +170,45 @@ def roll_all():
                 d20_tot += curr_roll
             d20_tot += int(mods[4])
             row_tots += [d20_tot]
+        else:
+            # DX
+            rolls_dx = []
+            dx_tot = 0
+            to_roll = request.form.get('DX')
+            for p in range(0, int(num_rolls[x])):
+                # Same as if case, but for dx. 
+                curr_roll = random.randint(1, int(to_roll))
+                rolls_dx += [curr_roll]
+                dx_tot += curr_roll
+            dx_tot += int(mods[5])
+            row_tots += [dx_tot]
+
     #''' Cumulative Total '''
     for k in range(0, len(row_tots)):
         #""" Loop through the list of row totals, adding them all to the cumulative total. """
         result += row_tots[k]
-    for l in range(0, len(mods)):
-        #""" Loop through the list of mods and creating new variables for them, adding a + sign to positive modifiers and leaving the negative ones as is, just for aesthetic purposes on the HTML side. """
-        if l == 0:
-            #""" Need to explicitly go through each index since the dice are not in any order or pattern. """
-            if int(mods[0]) > 0:
-                mod_d4 = str('+'+ str(mods[0]))
-            mod_d4 = str(mods[0])
-        elif l == 1:
-            if int(mods[1]) > 0:
-                mod_d6 = str('+'+ str(mods[1]))
-            mod_d6 = str(mods[1])
-        elif l == 2:
-            if int(mods[2]) > 0:
-                mod_d8 = str('+' + str(mods[2]))
-            mod_d8 = str(mods[2])
-        elif l == 3:
-            if int(mods[3]) > 0:
-                mod_d10 = str('+' + str(mods[3]))
-            mod_d10 = str(mods[3])
-        else:
-            if int(mods[4]) > 0:
-                mod_d20 = str('+' + str(mods[4]))
-            mod_d20 = str(mods[4])
+    if int(mods[0]) > 0:
+        mod_d4 = '+' + str(mods[0])
+    elif int(mods[1]) > 0:
+        mod_d6 = '+' + str(mods[1])
+    elif int(mods[2]) > 0:
+        mod_d8 = '+' + str(mods[2])
+    elif int(mods[3]) > 0:
+        mod_d10 = '+' + str(mods[3])
+    elif int(mods[4]) > 0:
+        mod_d20 = '+' + str(mods[4])
+    elif int(mods[5]) > 0:
+        mod_dx = '+' + str(mods[5])
+    else:
+        mod_d4 = str(mods[0])
+        mod_d6 = str(mods[1])
+        mod_d8 = str(mods[2])
+        mod_d10 = str(mods[3])
+        mod_d20 = str(mods[4])
+        mod_dx = str(mods[5])
+
+    # For aesthetic purposes only
+    rolls_dx += ['D' + str(to_roll)]
 
     return render_template('./mult_dice.html', **locals())
 
@@ -201,6 +218,7 @@ def roll_all():
 def mkchar():
     return render_template('./mkchar.html', **locals())
 
+# Sets up a secret key for flask-login, and starts up the server on localhost:5000 with debug mode on
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
     app.run(debug=True, host='127.0.0.1', port=5000)

@@ -2,8 +2,7 @@
 <html>
     <head>
         <title>DnD Dice Roller</title>
-        <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css{% print("838383") %}') }}"/> -->
-        <link rel="stylesheet" href="static/style.css?{% print("3424") %}"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
     </head>
     <body>
         <div>
@@ -72,11 +71,20 @@
                             <td>{{d20_tot}}</td>
                         </tr>
                         <tr>
+                            <td>D<input type="number" name="DX" min="1" value="1" style="width: 3em;"></td>
+                            <td><input type="number" name="dx_rolls" min="0" value="0" style="width: 3em;"></td>
+                            <td><input type="number" name="dx_mod" value="0" style="width: 3em;"></td>
+                            <td>{{rolls_dx}}</td>
+                            <td>{{mod_dx}}</td>
+                            <td>{{dx_tot}}</td>
+                        </tr>
+                        <tr>
                             <td colspan="2"><button onclick="location.reload()">Reset</button></td>
                             <td colspan="2"><input value="Roll Dice!"type="submit"></td>
-                            <td colspan="2">Final Result: {{result}}</td>
+                            <td colspan="2" style="font-weight: bold;">Final Result: {{result}}</td>
                         </tr>
                     </form>
+                </table>
             </div>
             <p>If you want to roll a die not in this list, add a / to the url, then whatever sided die you want to roll! It will bring you to a new page where it will roll that number die as many times as you want!</p>
         </div>
