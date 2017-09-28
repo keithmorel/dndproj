@@ -183,22 +183,27 @@ def roll_all():
         result += row_tots[k]
     if int(mods[0]) > 0:
         mod_d4 = '+' + str(mods[0])
-    elif int(mods[1]) > 0:
-        mod_d6 = '+' + str(mods[1])
-    elif int(mods[2]) > 0:
-        mod_d8 = '+' + str(mods[2])
-    elif int(mods[3]) > 0:
-        mod_d10 = '+' + str(mods[3])
-    elif int(mods[4]) > 0:
-        mod_d20 = '+' + str(mods[4])
-    elif int(mods[5]) > 0:
-        mod_dx = '+' + str(mods[5])
     else:
         mod_d4 = str(mods[0])
+    if int(mods[1]) > 0:
+        mod_d6 = '+' + str(mods[1])
+    else:
         mod_d6 = str(mods[1])
+    if int(mods[2]) > 0:
+        mod_d8 = '+' + str(mods[2])
+    else:
         mod_d8 = str(mods[2])
+    if int(mods[3]) > 0:
+        mod_d10 = '+' + str(mods[3])
+    else:
         mod_d10 = str(mods[3])
+    if int(mods[4]) > 0:
+        mod_d20 = '+' + str(mods[4])
+    else:
         mod_d20 = str(mods[4])
+    if int(mods[5]) > 0:
+        mod_dx = '+' + str(mods[5])
+    else:
         mod_dx = str(mods[5])
 
     # For aesthetic purposes only
