@@ -21,6 +21,7 @@ li a {
     text-align: center;
     text-decoration: none;
     color: #666;
+    padding: 3px;
 }
 
 th {
@@ -32,8 +33,4 @@ th {
 th, td {
     padding: 15px;
     text-align: center;
-}
-.centered {
-    margin-left: auto;
-    margin-right: auto;
 }
