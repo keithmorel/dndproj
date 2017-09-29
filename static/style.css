@@ -38,3 +38,7 @@ th, td {
 input {
     padding: 5px;
 }
+
+button {
+    text-decoration: none;
+}
