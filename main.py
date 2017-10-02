@@ -1,3 +1,4 @@
+# All the imports .....
 from flask import Flask, render_template, request, session, abort, redirect, Response, url_for
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
 app = Flask(__name__)
@@ -10,15 +11,18 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
+# Route for basic homepage, subject to change
 @app.route('/')
 def index():
     return render_template('./home.html', **locals())
 
+# Ignore for now
 class LoginForm(FlaskForm):
     username = StringField('Username')
     password = PasswordField('Password')
     submit = SubmitField('Submit')
 
+# Also ignore
 class User(UserMixin):
 
     def __init__(self, id):
@@ -31,6 +35,7 @@ class User(UserMixin):
 
 users = [User(id) for id in range(1,21)]
 
+# Keep ignoring
 @app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
@@ -44,18 +49,20 @@ def login():
         return redirect(url_for('mkchar'))
     return render_template('login.html', form=form)
 
+# Zzzzzzz
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
     return redirect("/")
 
+# ...........
 @login_manager.user_loader
 def load_user(userid):
     return User(userid)
 
+# Hey! Actual working code! Default home page with all information filled in as blanks, showing you how the information is formatted.
 @app.route('/roll')
-# Default home page with all information filled in as blanks, showing you how the information is formatted.
 def all_dice():
     rolls_d4 = []    # Lists of accumulated rolls for all the different dice 
     rolls_d6 = []
@@ -78,17 +85,19 @@ def all_dice():
     result = 0    # Final result that appears at the bottom right of the table 
     return render_template('./mult_dice.html', **locals())
 
-@app.route("/roll_all/", methods=['POST'])
 # Main method that does the most amount of work on the site. Takes in all of the inputs and modifiers from all of the different dice available and calculates the total amount rolled for each row and total. 
+@app.route("/roll_all/", methods=['POST'])
 def roll_all():
-    num_rolls = []    # Initializing a list to store the number of times to roll each individual die, using a GET request to pull this information from the inputs. 
+    # Initializing a list to store the number of times to roll each individual die, using a GET request to pull this information from the inputs. 
+    num_rolls = []
     num_rolls += [request.form.get('d4_rolls')]
     num_rolls += [request.form.get('d6_rolls')]
     num_rolls += [request.form.get('d8_rolls')]
     num_rolls += [request.form.get('d10_rolls')]
     num_rolls += [request.form.get('d20_rolls')]
     num_rolls += [request.form.get('dx_rolls')]
-    mods = []    # Initializing a list to store the modifiers that are added or subtracted to the totals of each row using a GET request, not to each individual roll. 
+    # Initializing a list to store the modifiers that are added or subtracted to the totals of each row using a GET request, not to each individual roll. 
+    mods = [] 
     mods += [request.form.get('d4_mod')]
     mods += [request.form.get('d6_mod')]
     mods += [request.form.get('d8_mod')]
@@ -108,7 +117,7 @@ def roll_all():
     result = 0    # Initialize final result as 0, just in case nothing is filled out. 
     row_tots = []   # Initialize list to hold the row totals, which will be added together at the end to the final result. 
     for x in range(0,6):
-        # Since the dice chosen on this page are fixed and not in order, this is needed to be able to loop through the list of the number of rolls of each die and the modifiers for each die. e.g. [d4_rolls, d6_rolls, d8_rolls, d10_rolls, d20_rolls], and [d4_mod, d6_mod, d8_mod, d10_mod, d20_mod] 
+        # Since the dice chosen on this page are fixed and not in order, this is needed to be able to loop through the list of the number of rolls of each die and the modifiers for each die. e.g. [d4_rolls, d6_rolls, d8_rolls, d10_rolls, d20_rolls, dx_rolls], and [d4_mod, d6_mod, d8_mod, d10_mod, d20_mod, dx_mod] 
         if x == 0:
             # D4 
             rolls_d4 = []
@@ -181,6 +190,8 @@ def roll_all():
     for k in range(0, len(row_tots)):
         # Loop through the list of row totals, adding them all to the cumulative total. 
         result += row_tots[k]
+
+    # Add a '+' to all positive modifiers, just for aesthetic purposes.
     if int(mods[0]) > 0:
         mod_d4 = '+' + str(mods[0])
     else:
@@ -206,7 +217,8 @@ def roll_all():
     else:
         mod_dx = str(mods[5])
 
-    # For aesthetic purposes only
+    # Add the last action done to the end of the list of rolls you had, For aesthetic purposes only
+    # E.g. If you rolled 5 d6's, '5xd6' would be added to the list
     if int(num_rolls[0]) > 0:
         rolls_d4 += [str(num_rolls[0]) + 'xD4']
     if int(num_rolls[1]) > 0:
