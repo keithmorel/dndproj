@@ -1,4 +1,4 @@
-# dndproj
+# DnD Dice Rolling Website (more to come)
 Small webapp for rolling different sided dice, and in the future, for creating character design sheets, saving to user accounts, etc.
 
 ## Current Features
