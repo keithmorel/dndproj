@@ -55,7 +55,6 @@ def login():
             error = 'Invalid password'
         else:
             session['logged_in'] = True
-            flash('Logged in successfully')
             return redirect(url_for('user_list'))
     return render_template('login.html', **locals())
 
@@ -63,7 +62,6 @@ def login():
 @app.route("/logout")
 def logout():
     session.pop('logged_in', None)
-    flash('You were logged out')
     return redirect("/")
 
 @app.route('/user_list')

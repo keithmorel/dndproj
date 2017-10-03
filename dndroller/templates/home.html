@@ -12,8 +12,11 @@
                     <li><a href="{{ url_for('index') }}" class="active">Home</a></li>
                     <li><a href="{{ url_for('all_dice') }}">Roll Dice</a></li>
                     <li><a href="{{ url_for('mkchar') }}">Character Sheet</a></li>
-                    <li><a href="{{ url_for('login') }}">Login</a></li>
-                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% if not session.logged_in %}
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% endif %}
                 </ul>
             <div class="content"></div>
                 <p>Choose from any of the above links:<br>
