@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>DnD Site</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+    </head>
+    <body>
+        <div>
+            <div class="header"></div>
+            <h2>Welcome to my DnD Site!</h2>
+                <ul>
+                    <li><a href="{{ url_for('index') }}" class="active">Home</a></li>
+                    <li><a href="{{ url_for('all_dice') }}">Roll Dice</a></li>
+                    <li><a href="{{ url_for('mkchar') }}">Character Sheet</a></li>
+                    {% if not session.logged_in %}
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% endif %}
+                </ul>
+            <div class="content">
+                {% if session.logged_in %}
+                    <form action="{{ url_for('create') }}" method="POST">
+                        Character Name: <input type="text" size="20" name="char_name">
+                        Class: <input type="text" size="20" name="char_class">
+                        Level: <input type="number" min="1" value="1" name="char_lvl">
+                        <input type="submit" value="Create">
+                    </form>
+                {% endif %}
+                <ol class="char_list">
+                    <h2>Character List</h2>
+                    {% for character in entries %}
+                    <li>Character Name: {{ character.char_name }}<br>
+                        Class: {{ character.char_class }}<br>
+                        Level: {{ character.char_lvl }}<br>
+                    <h2>End Character</h2>
+                    {% else %}
+                        <li>No characters available</li>
+                    {% endfor %}
+                </ol>
+            </div>
+            <div class="footer"></div>
+        </div>
+    </body>
+</html>

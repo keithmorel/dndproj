@@ -55,32 +55,30 @@ def login():
             error = 'Invalid password'
         else:
             session['logged_in'] = True
-            return redirect(url_for('user_list'))
+            return redirect(url_for('char_list'))
     return render_template('login.html', **locals())
 
-# Zzzzzzz
 @app.route("/logout")
 def logout():
     session.pop('logged_in', None)
     return redirect("/")
 
-@app.route('/user_list')
-def user_list():
+@app.route('/char_list')
+def char_list():
     db = get_db()
-    cur = db.execute('select * from user_database')
+    cur = db.execute('select * from char_sheets')
     entries = cur.fetchall()
-    return render_template('user_list.html', **locals())
+    return render_template('char_list.html', **locals())
 
-@app.route('/register', methods=['POST'])
-def register():
+@app.route('/create', methods=['POST'])
+def create():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    db.execute('insert into user_database (username, password) values (?, ?)',
-            [request.form['username'], request.form['password']])
+    db.execute('insert into char_sheets (char_name, char_class, char_lvl) values (?, ?, ?)',
+            [request.form['char_name'], request.form['char_class'], request.form['char_lvl']])
     db.commit()
-    flash('New user was successfully registered')
-    return redirect(url_for('user_list'))
+    return redirect(url_for('char_list'))
 
 # Hey! Actual working code! Default home page with all information filled in as blanks, showing you how the information is formatted.
 @app.route('/roll')
@@ -298,3 +296,6 @@ def roll_str():
     elif int(str_att) == 30:
         str_roll += 10
     return render_template("./mkchar.html", **locals())
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0',port=5000,debug=True)
