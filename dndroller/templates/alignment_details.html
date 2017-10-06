@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Alignment Details</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+    </head>
+    <body>
+        <div>
+            <div class="header"></div>
+            <h2>More Details on all of the alignments in DnD</h2>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('all_dice') }}">Roll Dice</a></li>
+                {% if not session.logged_in %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                {% endif %}
+            </ul>
+            <div class="content"></div>
+            <ol>
+                <li><p class="info">Lawful Good - Typically acts with compassion and always with honor and a sense of duty. Such characters include righteous knights, paladins, and most dwarves.</p>
+                <li><p class="info">Neutral Good - Typically acts altruistically, without regard for or against lawful precepts such as rules or tradition. A neutral good character has no problems with cooperating with lawful officials, but does not feel beholden to them. In the event that doing the right thing requires the bending or breaking of rules, they do not suffer the same inner conflict that a lawful good character would.</p>
+                <li><p class="info">Chaotic Good - A chaotic good character does what is necessary to bring about change for the better, disdains bureaucratic organizations that get in the way of social improvement, and places a high value on personal freedom, not only for oneself, but for others as well. Chaotic good characters usually intend to do the right thing, but their methods are generally disorganized and often out of sync with the rest of society.</p>
+                <li><p class="info">Lawful Neutral - A lawful neutral character typically believes strongly in lawful concepts such as honor, order, rules, and tradition, and often follows a personal code. Examples of lawful neutral characters include a soldier who always follows orders, a judge or enforcer that adheres mercilessly to the word of the law, and a disciplined monk.</p>
+                <li><p class="info">Neutral - A neutral character (a.k.a. true neutral) is neutral on both axes and tends not to feel strongly towards any alignment, or actively seeks their balance. Most animals are originally considered true neutral, because they lack the capacity for moral judgment, guided by instinct rather than conscious decision.</p>
+                <li><p class="info">Chaotic Neutral - A chaotic neutral character is an individualist who follows their own heart and generally shirks rules and traditions. Although chaotic neutral characters promote the ideals of freedom, it is their own freedom that comes first; good and evil come second to their need to be free.</p>
+                <li><p class="info">Lawful Evil - A lawful evil character sees a well-ordered system as being easier to exploit and shows a combination of desirable and undesirable traits. Examples of this alignment include tyrants, devils, and undiscriminating mercenary types who have a strict code of conduct.</p>
+                <li><p class="info">Neutral Evil - A neutral evil character is typically selfish and has no qualms about turning on allies-of-the-moment, and usually makes allies primarily to further their own goals. A neutral evil character has no compunctions about harming others to get what they want, but neither will they go out of their way to cause carnage or mayhem when they see no direct benefit for themselves. Another valid interpretation of neutral evil holds up evil as an ideal, doing evil for evil's sake and trying to spread its influence.</p>
+                <li><p class="info">Chaotic Evil - A chaotic evil character tends to have no respect for rules, other people's lives, or anything but their own desires, which are typically selfish and cruel. They set a high value on personal freedom, but do not have much regard for the lives or freedom of other people. Chaotic evil characters do not work well in groups because they resent being given orders and do not usually behave themselves unless there is no alternative.</p>
+            <!-- <form class="att_rolls" name="roll_str" action="/roll_str/" method="POST">
+                Strength: <input name="char_str" type="number" value="11" min="1" max="30"></input>
+                {{ str_roll }}
+                <input type="submit" value="Roll Strength"><br>
+            </form> -->
+            <div class="footer"></div>
+        </div>
+    </body>
+</html>

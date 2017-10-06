@@ -42,3 +42,11 @@ input {
 button {
     text-decoration: none;
 }
+
+details {
+    display: inline;
+}
+
+ol {
+    padding: 5px;
+}

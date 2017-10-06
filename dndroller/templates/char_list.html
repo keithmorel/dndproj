@@ -11,7 +11,6 @@
                 <ul>
                     <li><a href="{{ url_for('index') }}" class="active">Home</a></li>
                     <li><a href="{{ url_for('all_dice') }}">Roll Dice</a></li>
-                    <li><a href="{{ url_for('mkchar') }}">Character Sheet</a></li>
                     {% if not session.logged_in %}
                         <li><a href="{{ url_for('login') }}">Login</a></li>
                     {% else %}
@@ -23,17 +22,52 @@
                     <form action="{{ url_for('create') }}" method="POST">
                         Character Name: <input type="text" size="20" name="char_name">
                         Class: <input type="text" size="20" name="char_class">
-                        Level: <input type="number" min="1" value="1" name="char_lvl">
+                        Level: <input type="number" min="1" value="1" name="char_lvl"><br>
+                        Alignment: <input type="radio" name="alignment" value="Lawful Good">
+                        <input type="radio" name="alignment" value="Neutral Good">Neutral Good
+                        <input type="radio" name="alignment" value="Chaotic Good">Chaotic Good
+                        <input type="radio" name="alignment" value="Lawful Neutral">Lawful Neutral
+                        <input type="radio" name="alignment" value="Neutral">Neutral
+                        <input type="radio" name="alignment" value="Chaotic Neutral">Chaotic Neutral
+                        <input type="radio" name="alignment" value="Lawful Evil">Lawful Evil
+                        <input type="radio" name="alignment" value="Neutral Evil">Neutral Evil
+                        <input type="radio" name="alignment" value="Chaotic Evil">Chaotic Evil <a href="{{ url_for('alignment_details') }}" target="_blank">More Details on Alignments</a><br>
+                        Health: <input name="curr_health" type="number" min="0"> / <input name="max_health" type="number">
+                        Armor: <input name="char_armor" type="number" min="0"></input>
+                        Strength: <input name="char_str" type="number" value="11" min="1" max="30"></input>
+                        Dexterity: <input name="char_dex" type="number" value="11" min="1" max="30"></input>
+                        Constitution: <input name="char_const" type="number" value="11" min="1" max="30"></input>
+                        Intelligence: <input name="char_intel" type="number" value="11" min="1" max="30"></input>
+                        Wisdom: <input name="char_wisdom"type="number" value="11" min="1" max="30"></input>
+                        Charisma: <input name="char_charisma"type="number" value="11" min="1" max="30"></input>
+                        Perception: <input name="char_perception" type="number" value="11" min="1" max="30"></input><br>
+                        <textarea name="char_weapons" rows="10" cols="10">Type weapons and modifiers here.</textarea>
+                        <textarea name="char_inv" rows="10" cols="10">Type anything you have in your inventory here.</textarea>
+                        <textarea name="char_skills" rows="10" cols="10">Type all of your character's skills here.</textarea>
                         <input type="submit" value="Create">
                     </form>
+                    <a href="/init_db/">Clear Characters</a>
                 {% endif %}
                 <ol class="char_list">
                     <h2>Character List</h2>
                     {% for character in entries %}
-                    <li>Character Name: {{ character.char_name }}<br>
-                        Class: {{ character.char_class }}<br>
-                        Level: {{ character.char_lvl }}<br>
-                    <h2>End Character</h2>
+                    <li>Character Name: {{ character.char_name }}
+                        Class: {{ character.char_class }}
+                        Level: {{ character.char_lvl }}
+                        Alignment: {{ character.alignment }}<br>
+                        Health: {{ character.curr_health }} / {{ character.max_health }}
+                        Armor: {{ character.char_armor }}<br>
+                        Strength: {{ character.char_str }}
+                        Dexterity: {{ character.char_dec }}
+                        Constitution: {{ character.char_const }}
+                        Intelligence: {{ character.char_intel }}
+                        Wisdom: {{ character.char_wisdom }}
+                        Charisma: {{ character.char_charisma }}
+                        Perception: {{ character.char_perception }}<br>
+                        Weapons: {{ character.char_weapons }}<br>
+                        Inventory: {{ character.char_inv }}<br>
+                        Skills: {{ character.char_skills }}<br>
+                        <h2>End Character</h2>
                     {% else %}
                         <li>No characters available</li>
                     {% endfor %}

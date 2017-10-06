@@ -20,21 +20,19 @@ def connect_db():
     rv.row_factory = sqlite3.Row
     return rv
 
+def get_db():
+    if not hasattr(g, 'sqlite_db'):
+        g.sqlite_db = connect_db()
+    return g.sqlite_db
+
+@app.route('/init_db/')
 def init_db():
     db = get_db()
     with app.open_resource('schema.sql', mode='r') as f:
         db.cursor().executescript(f.read())
     db.commit()
+    return render_template('./char_list.html', **locals())
 
-@app.cli.command('initdb')
-def initdb_command():
-    init_db()
-    print('Initialized the database')
-
-def get_db():
-    if not hasattr(g, 'sqlite_db'):
-        g.sqlite_db = connect_db()
-    return g.sqlite_db
 @app.teardown_appcontext
 def close_db(error):
     if hasattr(g, 'sqlite_db'):
@@ -75,10 +73,14 @@ def create():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    db.execute('insert into char_sheets (char_name, char_class, char_lvl) values (?, ?, ?)',
-            [request.form['char_name'], request.form['char_class'], request.form['char_lvl']])
+    db.execute('insert into char_sheets (char_name, char_class, char_lvl, alignment, curr_health, max_health, char_armor, char_str, char_dex, char_const, char_intel, char_wisdom, char_charisma, char_perception, char_weapons, char_inv, char_skills) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [request.form['char_name'], request.form['char_class'], request.form['char_lvl'], request.form['alignment'], request.form['curr_health'], request.form['max_health'], request.form['char_armor'], request.form['char_str'], request.form['char_dex'], request.form['char_const'], request.form['char_intel'], request.form['char_wisdom'], request.form['char_charisma'], request.form['char_perception'], request.form['char_weapons'], request.form['char_inv'], request.form['char_skills']])
     db.commit()
     return redirect(url_for('char_list'))
+
+@app.route('/alignment_details')
+def alignment_details():
+    return render_template('./alignment_details.html')
 
 # Hey! Actual working code! Default home page with all information filled in as blanks, showing you how the information is formatted.
 @app.route('/roll')
