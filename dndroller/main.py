@@ -7,6 +7,7 @@ import sqlite3
 app = Flask(__name__)
 app.config.from_object(__name__)
 
+# Configures the database name, secret key, and the admin username and password to be used to sign in.
 app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'dndusers.db'),
     SECRET_KEY='secret',
@@ -15,16 +16,20 @@ app.config.update(dict(
 ))
 app.config.from_envvar('DNDROLLER_SETTINGS', silent=True)
 
+# Connects to the sqlite database using the config settings above
 def connect_db():
     rv = sqlite3.connect(app.config['DATABASE'])
     rv.row_factory = sqlite3.Row
     return rv
 
+# Creates a reference to the database
 def get_db():
     if not hasattr(g, 'sqlite_db'):
         g.sqlite_db = connect_db()
     return g.sqlite_db
 
+# Clears out the database.
+# If you change the schema.sql file, MAKE SURE TO CLICK ON THIS BUTTON OR IT WILL NOT WORK
 @app.route('/init_db/')
 def init_db():
     db = get_db()
@@ -43,6 +48,7 @@ def close_db(error):
 def index():
     return render_template('./home.html', **locals())
 
+# Basic login page route that lets you login using the admin account info, locaed near the top of this file
 @app.route("/login", methods=["GET", "POST"])
 def login():
     error = None
@@ -56,11 +62,13 @@ def login():
             return redirect(url_for('char_list'))
     return render_template('login.html', **locals())
 
+# Logs out the current user
 @app.route("/logout")
 def logout():
     session.pop('logged_in', None)
     return redirect("/")
 
+# Route for the page that displays all of the current characters in the database
 @app.route('/char_list')
 def char_list():
     db = get_db()
@@ -68,6 +76,7 @@ def char_list():
     entries = cur.fetchall()
     return render_template('char_list.html', **locals())
 
+# Route that adds all of the info from the form into the database
 @app.route('/create', methods=['POST'])
 def create():
     if not session.get('logged_in'):
@@ -78,6 +87,7 @@ def create():
     db.commit()
     return redirect(url_for('char_list'))
 
+# Route to page that gives more information on all of the alignments
 @app.route('/alignment_details')
 def alignment_details():
     return render_template('./alignment_details.html')
