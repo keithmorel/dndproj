@@ -82,8 +82,38 @@ def create():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    db.execute('insert into char_sheets (char_name, char_class, char_lvl, alignment, curr_health, max_health, char_armor, char_str, char_dex, char_const, char_intel, char_wisdom, char_charisma, char_perception, char_weapons, char_inv, char_skills) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [request.form['char_name'], request.form['char_class'], request.form['char_lvl'], request.form['alignment'], request.form['curr_health'], request.form['max_health'], request.form['char_armor'], request.form['char_str'], request.form['char_dex'], request.form['char_const'], request.form['char_intel'], request.form['char_wisdom'], request.form['char_charisma'], request.form['char_perception'], request.form['char_weapons'], request.form['char_inv'], request.form['char_skills']])
+    db.execute('insert into char_sheets (char_name, char_class, char_lvl, alignment, curr_health, max_health, char_armor, char_str, char_dex, char_const, char_intel, char_wisdom, char_charisma, char_perception, char_weapons, char_inv, char_skills) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [request.form['char_name'], request.form['char_class'], request.form['char_lvl'], request.form['alignment'], request.form['curr_health'], request.form['max_health'], request.form['char_armor'], request.form['char_str'], request.form['char_dex'], request.form['char_const'], request.form['char_intel'], request.form['char_wisdom'], request.form['char_charisma'], request.form['char_perception'], request.form['char_weapons'], request.form['char_inv'], request.form['char_skills']])
+    db.commit()
+    return redirect(url_for('char_list'))
+
+@app.route('/delete_char/', methods=['POST'])
+def delete_char():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    db.execute('delete from char_sheets where char_name = ?', [request.form['to_delete']])
+    db.commit()
+    return redirect(url_for('char_list'))
+
+@app.route('/update_char', methods=['POST'])
+def update_char():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    cur = db.execute('select * from char_sheets where char_name = ?', [request.form['to_update']])
+    entry = cur.fetchall()
+    return render_template('char_update.html', **locals())
+
+@app.route('/char_update/', methods=['POST'])
+def update():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    print('about to delete')
+    db.execute('delete from char_sheets where char_name = ?', [request.form['char_name']])
+    db.commit()
+    print('about to insert')
+    db.execute('insert into char_sheets (char_name, char_class, char_lvl, alignment, curr_health, max_health, char_armor, char_str, char_dex, char_const, char_intel, char_wisdom, char_charisma, char_perception, char_weapons, char_inv, char_skills) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [request.form['char_name'], request.form['char_class'], request.form['char_lvl'], request.form['alignment'], request.form['curr_health'], request.form['max_health'], request.form['char_armor'], request.form['char_str'], request.form['char_dex'], request.form['char_const'], request.form['char_intel'], request.form['char_wisdom'], request.form['char_charisma'], request.form['char_perception'], request.form['char_weapons'], request.form['char_inv'], request.form['char_skills']])
     db.commit()
     return redirect(url_for('char_list'))
 

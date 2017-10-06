@@ -49,6 +49,14 @@
                     <a href="/init_db/">Clear Characters</a>
                 {% endif %}
                 <ol class="char_list">
+                    <form name="update_char" action="/update_char" method="POST">
+                        Type in a character name to update: <input type="text" name="to_update">
+                        <input type="submit" value="Update">
+                    </form>
+                    <form name="delete_char" action="/delete_char/" method="POST">
+                        Type in a character name to delete: <input type="text" name="to_delete"> 
+                        <input type="submit" value="Delete">
+                    </form>
                     <h2>Character List</h2>
                     {% for character in entries %}
                     <li>Character Name: {{ character.char_name }}
