@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>DnD Site</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+    </head>
+    <body>
+        <div>
+            <div class="header"></div>
+            <h2>Welcome to my DnD Site!</h2>
+                <ul>
+                    <li><a href="{{ url_for('index') }}" class="active">Home</a></li>
+                    <li><a href="{{ url_for('all_dice') }}">Roll Dice</a></li>
+                    {% if not session.logged_in %}
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% endif %}
+                </ul>
+            <div class="content">
+                {% for character in entry %}
+                    Character Name: {{ character.char_name }}<br>
+                    Class: {{ character.char_class }}<br>
+                    Level: {{ character.char_lvl }}<br>
+                    Alignment: {{ character.alignment }}<br>
+                    Health: {{ character.curr_health }}/{{ character.max_health }}<br>
+                    Armor: {{ character.char_armor }}<br>
+                    Strenth: {{ character.char_str }}
+                    <form name="roll_str" action="/roll_str/" method="POST">
+                        <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                        <input type="hidden" name="str_val" value="{{ character.char_str }}">
+                        <input type="submit" value="Roll Strength">
+                    </form>
+                    {{ str_roll }} {{ mod_str }}<br>
+                    Dexterity: {{ character.char_dex }}<br>
+                    Constitution: {{ character.char_const }}<br>
+                    Intelligence: {{ character.char_intel }}<br>
+                    Wisdom: {{ character.char_wisdom }}<br>
+                    Charisma: {{ character.char_charisma }}<br>
+                    Perception: {{ character.char_perception }}<br>
+                    Weapons: {{ character.char_weapons }}<br>
+                    Inventory: {{ character.char_inv }}<br>
+                    Skills: {{ character.char_skills }}<br>
+                {% endfor %}
+            </div>
+            <div class="footer"></div>
+        </div>
+    </body>
+</html>

@@ -20,18 +20,22 @@
             <div class="content">
                 <form action="/char_update/" method="POST">
                         {% for character in entry %}
-                        Character Name: <input type="text" size="20" name="char_name" value="{{ character.char_name }}">
+                        Character Name: <input type="text" size="20" name="char_name" value="{{ character.char_name }}" readonly="true">
                         Class: <input type="text" size="20" name="char_class" value="{{ character.char_class }}">
                         Level: <input type="number" min="1" value="{{ character.char_lvl }}" name="char_lvl"><br>
-                        Alignment: <input type="radio" name="alignment" value="Lawful Good">
-                        <input type="radio" name="alignment" value="Neutral Good">Neutral Good
-                        <input type="radio" name="alignment" value="Chaotic Good">Chaotic Good
-                        <input type="radio" name="alignment" value="Lawful Neutral">Lawful Neutral
-                        <input type="radio" name="alignment" value="Neutral">Neutral
-                        <input type="radio" name="alignment" value="Chaotic Neutral">Chaotic Neutral
-                        <input type="radio" name="alignment" value="Lawful Evil">Lawful Evil
-                        <input type="radio" name="alignment" value="Neutral Evil">Neutral Evil
-                        <input type="radio" name="alignment" value="Chaotic Evil">Chaotic Evil <a href="{{ url_for('alignment_details') }}" target="_blank">More Details on Alignments</a><br>
+                        Alignment: <input type="radio" name="alignment" id="Lawful Good" value="Lawful Good">Lawful Good
+                        <input type="radio" name="alignment" id="Neutral Good" value="Neutral Good">Neutral Good
+                        <input type="radio" name="alignment" id="Chaotic Good" value="Chaotic Good">Chaotic Good
+                        <input type="radio" name="alignment" id="Lawful Neutral" value="Lawful Neutral">Lawful Neutral
+                        <input type="radio" name="alignment" id="Neutral" value="Neutral">Neutral
+                        <input type="radio" name="alignment" id="Chaotic Neutral" value="Chaotic Neutral">Chaotic Neutral
+                        <input type="radio" name="alignment" id="Lawful Evil" value="Lawful Evil">Lawful Evil
+                        <input type="radio" name="alignment" id="Neutral Evil" value="Neutral Evil">Neutral Evil
+                        <input type="radio" name="alignment" id="Chaotic Evil" value="Chaotic Evil">Chaotic Evil 
+                        <a href="{{ url_for('alignment_details') }}" target="_blank">More Details on Alignments</a><br>
+                        <script>
+                            document.getElementById("{{ character.alignment }}").checked = true;
+                        </script>
                         Health: <input name="curr_health" type="number" min="0" value="{{ character.curr_health }}"> / <input name="max_health" type="number" value="{{ character.max_health }}">
                         Armor: <input name="char_armor" type="number" min="0" value="{{ character.char_armor }}"></input>
                         Strength: <input name="char_str" type="number" value="{{ character.char_str }}" min="1" max="30"></input>

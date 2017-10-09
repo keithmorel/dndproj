@@ -23,7 +23,7 @@
                         Character Name: <input type="text" size="20" name="char_name">
                         Class: <input type="text" size="20" name="char_class">
                         Level: <input type="number" min="1" value="1" name="char_lvl"><br>
-                        Alignment: <input type="radio" name="alignment" value="Lawful Good">
+                        Alignment: <input type="radio" name="alignment" value="Lawful Good">Lawful Good
                         <input type="radio" name="alignment" value="Neutral Good">Neutral Good
                         <input type="radio" name="alignment" value="Chaotic Good">Chaotic Good
                         <input type="radio" name="alignment" value="Lawful Neutral">Lawful Neutral
@@ -49,14 +49,6 @@
                     <a href="/init_db/">Clear Characters</a>
                 {% endif %}
                 <ol class="char_list">
-                    <form name="update_char" action="/update_char" method="POST">
-                        Type in a character name to update: <input type="text" name="to_update">
-                        <input type="submit" value="Update">
-                    </form>
-                    <form name="delete_char" action="/delete_char/" method="POST">
-                        Type in a character name to delete: <input type="text" name="to_delete"> 
-                        <input type="submit" value="Delete">
-                    </form>
                     <h2>Character List</h2>
                     {% for character in entries %}
                     <li>Character Name: {{ character.char_name }}
@@ -75,6 +67,18 @@
                         Weapons: {{ character.char_weapons }}<br>
                         Inventory: {{ character.char_inv }}<br>
                         Skills: {{ character.char_skills }}<br>
+                        <form name="view_char" action="/view_char" method="POST">
+                            <input type="hidden" name="to_view" value="{{ character.char_name }}">
+                            <input type="submit" value="View">
+                        </form>
+                        <form name="update_char" action="/update_char" method="POST">
+                            <input type="hidden" name="to_update" value="{{ character.char_name }}">
+                            <input type="submit" value="Update">
+                        </form>
+                        <form name="delete_char" action="/delete_char/" method="POST">
+                            <input type="hidden" name="to_delete" value="{{ character.char_name }}">
+                            <input type="submit" value="Delete">
+                        </form>
                         <h2>End Character</h2>
                     {% else %}
                         <li>No characters available</li>

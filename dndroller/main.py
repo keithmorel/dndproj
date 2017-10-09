@@ -109,13 +109,19 @@ def update():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    print('about to delete')
     db.execute('delete from char_sheets where char_name = ?', [request.form['char_name']])
-    db.commit()
-    print('about to insert')
     db.execute('insert into char_sheets (char_name, char_class, char_lvl, alignment, curr_health, max_health, char_armor, char_str, char_dex, char_const, char_intel, char_wisdom, char_charisma, char_perception, char_weapons, char_inv, char_skills) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [request.form['char_name'], request.form['char_class'], request.form['char_lvl'], request.form['alignment'], request.form['curr_health'], request.form['max_health'], request.form['char_armor'], request.form['char_str'], request.form['char_dex'], request.form['char_const'], request.form['char_intel'], request.form['char_wisdom'], request.form['char_charisma'], request.form['char_perception'], request.form['char_weapons'], request.form['char_inv'], request.form['char_skills']])
     db.commit()
     return redirect(url_for('char_list'))
+
+@app.route('/view_char', methods=['POST'])
+def view_char():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    cur = db.execute('select * from char_sheets where char_name = ?', [request.form['to_view']])
+    entry = cur.fetchall()
+    return render_template('view_char.html', **locals())
 
 # Route to page that gives more information on all of the alignments
 @app.route('/alignment_details')
@@ -303,41 +309,60 @@ def mkchar():
 
 @app.route("/roll_str/", methods=['POST'])
 def roll_str():
-    str_att = request.form.get('char_str')
+    str_att = request.form['str_val']
     str_roll = random.randint(1,20)
     if int(str_att) == 1:
         str_roll -= 5
+        mod_str = "-5"
     elif int(str_att) == 2 or int(str_att) == 3:
         str_roll -= 4
+        mod_str = "-4"
     elif int(str_att) == 4 or int(str_att) == 5:
         str_roll -= 3
+        mod_str = "-3"
     elif int(str_att) == 6 or int(str_att) == 7:
         str_roll -= 2
+        mod_str = "-2"
     elif int(str_att) == 8 or int(str_att) == 9:
         str_roll -= 1
+        mod_str = "-1"
     elif int(str_att) == 10 or int(str_att) == 11:
         str_roll = str_roll
+        mod_str = "0"
     elif int(str_att) == 12 or int(str_att) == 13:
         str_roll += 1
+        mod_str = "+1"
     elif int(str_att) == 14 or int(str_att) == 15:
         str_roll += 2
+        mod_str = "+2"
     elif int(str_att) == 16 or int(str_att) == 17:
         str_roll += 3
+        mod_str = "+3"
     elif int(str_att) == 18 or int(str_att) == 19:
         str_roll += 4
+        mod_str = "+4"
     elif int(str_att) == 20 or int(str_att) == 21:
         str_roll += 5
+        mod_str = "+5"
     elif int(str_att) == 22 or int(str_att) == 23:
         str_roll += 6
+        mod_str = "+6"
     elif int(str_att) == 24 or int(str_att) == 25:
         str_roll += 7
+        mod_str = "+7"
     elif int(str_att) == 26 or int(str_att) == 27:
         str_roll += 8
+        mod_str = "+8"
     elif int(str_att) == 28 or int(str_att) == 29:
         str_roll += 9
+        mod_str = "+9"
     elif int(str_att) == 30:
         str_roll += 10
-    return render_template("./mkchar.html", **locals())
+        mod_str = "+10"
+    db = get_db()
+    cur = db.execute('select * from char_sheets where char_name = ?', [request.form['char_name']])
+    entry = cur.fetchall()
+    return render_template('view_char.html', **locals())
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=5000,debug=True)
