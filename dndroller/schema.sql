@@ -19,3 +19,10 @@ create table char_sheets (
     char_inv blob,
     char_skills blob
 );
+
+drop table if exists user_list;
+create table user_list (
+    id integer primary key autoincrement,
+    username text not null,
+    password
+);

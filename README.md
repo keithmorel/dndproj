@@ -7,6 +7,8 @@ Small webapp for rolling different sided dice, and in the future, for creating c
 3. Make character sheet found after logging in with admin profile
 4. Created characters are saved onto the local database table
 5. Database can be cleared with a button on the same page
+6. User is able to view, update, and delete character sheets from the list
+7. On the view page for each character, user is able to roll strength, using the current value, on a d20 with the modifier.
 
 ## TODO
 ~~1. Get a database up and running~~
