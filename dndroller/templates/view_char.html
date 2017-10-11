@@ -22,6 +22,7 @@
                 <a href="{{ url_for('char_list') }}">Back to List</a><br>
                 {% for character in entry %}
                     Character Name: {{ character.char_name }}<br>
+                    Race: {{ character.char_race }}<br>
                     Class: {{ character.char_class }}<br>
                     <form name="level_up" action="/level_up/" method="POST">
                         Level: {{ character.char_lvl }}

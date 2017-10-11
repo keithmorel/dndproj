@@ -21,7 +21,37 @@
                 <form action="/char_update/" method="POST">
                         {% for character in entry %}
                         Character Name: <input type="text" size="20" name="char_name" value="{{ character.char_name }}" readonly="true">
-                        Class: <input type="text" size="20" name="char_class" value="{{ character.char_class }}">
+                        Race: <select name="char_race" id="char_race">
+                            <option value="Dwarf">Dwarf</option>
+                            <option value="Elf">Elf</option>
+                            <option value="Halfling">Halfling</option>
+                            <option value="Human">Human</option>
+                            <option value="Dragonborn">Dragonborn</option>
+                            <option value="Gnome">Gnome</option>
+                            <option value="Half-Elf">Half-Elf</option>
+                            <option value="Half_Orc">Half-Orc</option>
+                            <option value="Tiefling">Tiefling</option>
+                        </select>
+                        <script>
+                            document.getElementById("char_race").value = "{{ character.char_race }}";
+                        </script>
+                        Class: <select name="char_class" id="char_class">
+                            <option value="Barbarian">Barbarian</option>
+                            <option value="Bard">Bard</option>
+                            <option value="Cleric">Cleric</option>
+                            <option value="Druid">Druid</option>
+                            <option value="Fighter">Fighter</option>
+                            <option value="Monk">Monk</option>
+                            <option value="Paladin">Paladin</option>
+                            <option value="Ranger">Ranger</option>
+                            <option value="Rogue">Rogue</option>
+                            <option value="Sorcerer">Sorcerer</option>
+                            <option value="Warlock">Warlock</option>
+                            <option value="Wizard">Wizard</option>
+                        </select>
+                        <script>
+                            document.getElementById("char_class").value = "{{ character.char_class }}";
+                        </script>
                         Level: <input type="number" min="1" value="{{ character.char_lvl }}" name="char_lvl"><br>
                         Alignment: <input type="radio" name="alignment" id="Lawful Good" value="Lawful Good">Lawful Good
                         <input type="radio" name="alignment" id="Neutral Good" value="Neutral Good">Neutral Good

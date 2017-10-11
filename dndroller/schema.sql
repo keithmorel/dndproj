@@ -3,6 +3,7 @@ create table char_sheets (
     id integer primary key autoincrement,
     author text not null,
     char_name text not null,
+    char_race text not null,
     char_class text not null,
     char_lvl integer not null,
     alignment text not null,
