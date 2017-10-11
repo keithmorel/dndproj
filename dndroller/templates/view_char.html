@@ -14,6 +14,7 @@
                     {% if not session.logged_in %}
                         <li><a href="{{ url_for('login') }}">Login</a></li>
                     {% else %}
+                        <li>Logged in as: {{ session['username'] }}</li>
                         <li><a href="{{ url_for('logout') }}">Logout</a></li>
                     {% endif %}
                 </ul>
@@ -29,7 +30,12 @@
                         <input type="submit" value="Level Up!">
                     </form>
                     Alignment: {{ character.alignment }}<br>
-                    Health: {{ character.curr_health }}/{{ character.max_health }}<br>
+                    <form name="update_hp" action="/update_hp/" method="POST">
+                        Health: 
+                        <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                        <input type="number" name="curr_health" min="0" value="{{ character.curr_health }}">/<input type="number" name="max_health" value="{{ character.max_health }}">
+                        <input type="submit" value="Update HP">
+                    </form>
                     Armor: {{ character.char_armor }}<br>
                     <form name="roll_str" action="/roll_str/" method="POST">
                         Strenth: {{ character.char_str }}
@@ -73,9 +79,25 @@
                         <input type="submit" value="Roll Charisma">
                         {{ init_charisma_roll }} {{ mod_charisma }} {{ charisma_roll }}<br>
                     </form>
-                    Perception: {{ character.char_perception }}<br>
-                    Weapons: {{ character.char_weapons }}<br>
-                    Inventory: {{ character.char_inv }}<br>
+                    Perception: {{ character.char_perception }}<br>                   
+                    <form name="update_weapons" action="/update_weapons/" method="POST">
+                        Weapons:
+                        <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                        <textarea name="char_weapons" rows="3" cols="30">{{ character.char_weapons }}</textarea>
+                        <input type="submit" value="Update Weapons">
+                    </form>
+                    <form name="update_inv" action="/update_inv/" method="POST">
+                        Inventory:
+                        <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                        <textarea name="char_inv" rows="3" cols="30">{{ character.char_inv }}</textarea>
+                        <input type="submit" value="Update Inventory">
+                    </form>
+                    <form name="update_notes" action="/update_notes/" method="POST">
+                        Notes:
+                        <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                        <textarea name="char_notes" rows="3" cols="30">{{ character.char_notes }}</textarea>
+                        <input type="submit" value="Update Notes">
+                    </form>
                     Skills: {{ character.char_skills }}<br>
                 {% endfor %}
             </div>

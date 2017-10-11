@@ -1,6 +1,7 @@
 drop table if exists char_sheets;
 create table char_sheets (
     id integer primary key autoincrement,
+    author text not null,
     char_name text not null,
     char_class text not null,
     char_lvl integer not null,
@@ -17,7 +18,8 @@ create table char_sheets (
     char_perception integer not null,
     char_weapons blob,
     char_inv blob,
-    char_skills blob
+    char_skills blob,
+    char_notes blob
 );
 
 drop table if exists user_list;

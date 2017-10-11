@@ -77,7 +77,8 @@ def login():
             # If it all checks out, log them in
             flash('Successfully logged in')
             session['logged_in'] = True
-            return redirect(url_for('char_list'))
+            session['username'] = db_user_name
+            return redirect('char_list')
     # If its a GET request, get all the users from the database that you can log in as
     db = get_db()
     cur = db.execute('select * from user_list')
@@ -101,22 +102,24 @@ def register():
         db.commit()
         flash('Successfully registered')
         session['logged_in'] = True
+        session['username'] = request.form['username']
         cur = db.execute('select * from char_sheets')
         entries = cur.fetchall()
-        return redirect(url_for('char_list'))
+        return redirect('char_list')
     return render_template('login.html', **locals())
 
 # Logs out the current user
 @app.route("/logout")
 def logout():
     session.pop('logged_in', None)
+    session.pop('username', None)
     return redirect("/")
 
 # Route for the page that displays all of the current characters in the database
 @app.route('/char_list')
 def char_list():
     db = get_db()
-    cur = db.execute('select * from char_sheets')
+    cur = db.execute('select * from char_sheets where author = ?', [session['username']])
     entries = cur.fetchall()
     return render_template('char_list.html', **locals())
 
@@ -126,13 +129,13 @@ def create():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    cur = db.execute('select * from char_sheets where char_name = ?', [request.form['char_name']])
+    cur = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
     # Check if character already exists
     if cur.fetchall() != []:
         flash('Character with that name already exists. Try another one')
-        return redirect(url_for('char_list'))
+        return redirect('char_list')
     # If they don't exist, create them
-    db.execute('insert into char_sheets (char_name, char_class, char_lvl, alignment, curr_health, max_health, char_armor, char_str, char_dex, char_const, char_intel, char_wisdom, char_charisma, char_perception, char_weapons, char_inv, char_skills) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [request.form['char_name'], request.form['char_class'], request.form['char_lvl'], request.form['alignment'], request.form['curr_health'], request.form['max_health'], request.form['char_armor'], request.form['char_str'], request.form['char_dex'], request.form['char_const'], request.form['char_intel'], request.form['char_wisdom'], request.form['char_charisma'], request.form['char_perception'], request.form['char_weapons'], request.form['char_inv'], request.form['char_skills']])
+    db.execute('insert into char_sheets (author, char_name, char_class, char_lvl, alignment, curr_health, max_health, char_armor, char_str, char_dex, char_const, char_intel, char_wisdom, char_charisma, char_perception, char_weapons, char_inv, char_skills, char_notes) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [session['username'], request.form['char_name'], request.form['char_class'], request.form['char_lvl'], request.form['alignment'], request.form['curr_health'], request.form['max_health'], request.form['char_armor'], request.form['char_str'], request.form['char_dex'], request.form['char_const'], request.form['char_intel'], request.form['char_wisdom'], request.form['char_charisma'], request.form['char_perception'], request.form['char_weapons'], request.form['char_inv'], request.form['char_skills'], request.form['char_notes']])
     db.commit()
     return redirect(url_for('char_list'))
 
@@ -142,7 +145,7 @@ def delete_char():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    db.execute('delete from char_sheets where char_name = ?', [request.form['to_delete']])
+    db.execute('delete from char_sheets where char_name = ? and author = ?', [request.form['to_delete'], session['username']])
     db.commit()
     return redirect(url_for('char_list'))
 
@@ -152,7 +155,7 @@ def update_char():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    cur = db.execute('select * from char_sheets where char_name = ?', [request.form['to_update']])
+    cur = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['to_update'], session['username']])
     entry = cur.fetchall()
     return render_template('char_update.html', **locals())
 
@@ -163,7 +166,7 @@ def update():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    db.execute('update char_sheets set char_class = ?, char_lvl = ?, alignment = ?, curr_health = ?, max_health = ?, char_armor = ?, char_str = ?, char_dex = ?, char_const = ?, char_intel = ?, char_wisdom = ?, char_charisma = ?, char_perception = ?, char_weapons = ?, char_inv = ?, char_skills = ? where char_name = ?', [request.form['char_class'], request.form['char_lvl'], request.form['alignment'], request.form['curr_health'], request.form['max_health'], request.form['char_armor'], request.form['char_str'], request.form['char_dex'], request.form['char_const'], request.form['char_intel'], request.form['char_wisdom'], request.form['char_charisma'], request.form['char_perception'], request.form['char_weapons'], request.form['char_inv'], request.form['char_skills'], request.form['char_name']])
+    db.execute('update char_sheets set char_class = ?, char_lvl = ?, alignment = ?, curr_health = ?, max_health = ?, char_armor = ?, char_str = ?, char_dex = ?, char_const = ?, char_intel = ?, char_wisdom = ?, char_charisma = ?, char_perception = ?, char_weapons = ?, char_inv = ?, char_skills = ?, char_notes = ? where char_name = ? and author = ?', [request.form['char_class'], request.form['char_lvl'], request.form['alignment'], request.form['curr_health'], request.form['max_health'], request.form['char_armor'], request.form['char_str'], request.form['char_dex'], request.form['char_const'], request.form['char_intel'], request.form['char_wisdom'], request.form['char_charisma'], request.form['char_perception'], request.form['char_weapons'], request.form['char_inv'], request.form['char_skills'], request.form['char_notes'], request.form['char_name'], session['username']])
     db.commit()
     return redirect(url_for('char_list'))
 
@@ -173,7 +176,7 @@ def view_char():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    cur = db.execute('select * from char_sheets where char_name = ?', [request.form['to_view']])
+    cur = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['to_view'], session['username']])
     entry = cur.fetchall()
     return render_template('view_char.html', **locals())
 
@@ -360,10 +363,44 @@ def level_up():
     curr_lvl = int(request.form['char_lvl'])
     curr_lvl += 1
     db = get_db()
-    db.execute('update char_sheets set char_lvl = ? where char_name = ?', [curr_lvl, request.form['char_name']])
+    db.execute('update char_sheets set char_lvl = ? where char_name = ? and author = ?', [curr_lvl, request.form['char_name'], session['username']])
     db.commit()
-    cur = db.execute('select * from char_sheets where char_name = ?', [request.form['char_name']])
-    entry = cur.fetchall()
+    entry = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
+    return render_template('view_char.html', **locals())
+
+@app.route("/update_weapons/", methods=['POST'])
+def update_weapons():
+    curr_weapons = request.form['char_weapons']
+    db = get_db()
+    db.execute('update char_sheets set char_weapons = ? where char_name = ? and author = ?', [curr_weapons, request.form['char_name'], session['username']])
+    db.commit()
+    entry = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
+    return render_template('view_char.html', **locals())
+
+@app.route("/update_inv/", methods=['POST'])
+def update_inv():
+    curr_inv = request.form['char_inv']
+    db = get_db()
+    db.execute('update char_sheets set char_inv = ? where char_name = ? and author = ?', [curr_inv, request.form['char_name'], session['username']])
+    db.commit()
+    entry = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
+    return render_template('view_char.html', **locals())
+
+@app.route("/update_notes/", methods=['POST'])
+def update_notes():
+    curr_notes = request.form['char_notes']
+    db = get_db()
+    db.execute('update char_sheets set char_notes = ? where char_name = ? and author = ?', [curr_notes, request.form['char_name'], session['username']])
+    db.commit()
+    entry = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
+    return render_template('view_char.html', **locals())
+
+@app.route("/update_hp/", methods=['POST'])
+def update_hp():
+    db = get_db()
+    db.execute('update char_sheets set curr_health = ?, max_health = ? where char_name = ? and author = ?', [request.form['curr_health'], request.form['max_health'], request.form['char_name'], session['username']])
+    db.commit()
+    entry = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
     return render_template('view_char.html', **locals())
 
 # Route that rolls strength based on current strength level, adding the modifier accordingly
@@ -421,7 +458,7 @@ def roll_str():
         mod_str = "+10"
     # Must grab the character from the database again or else the view character page won't be filled out.
     db = get_db()
-    cur = db.execute('select * from char_sheets where char_name = ?', [request.form['char_name']])
+    cur = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
     entry = cur.fetchall()
     return render_template('view_char.html', **locals())
 
@@ -480,7 +517,7 @@ def roll_dex():
         mod_dex = "+10"
     # Must grab the character from the database again or else the view character page won't be filled out.
     db = get_db()
-    cur = db.execute('select * from char_sheets where char_name = ?', [request.form['char_name']])
+    cur = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
     entry = cur.fetchall()
     return render_template('view_char.html', **locals())
 
@@ -539,7 +576,7 @@ def roll_const():
         mod_const = "+10"
     # Must grab the character from the database again or else the view character page won't be filled out.
     db = get_db()
-    cur = db.execute('select * from char_sheets where char_name = ?', [request.form['char_name']])
+    cur = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
     entry = cur.fetchall()
     return render_template('view_char.html', **locals())
 
@@ -598,7 +635,7 @@ def roll_intel():
         mod_intel = "+10"
     # Must grab the character from the database again or else the view character page won't be filled out.
     db = get_db()
-    cur = db.execute('select * from char_sheets where char_name = ?', [request.form['char_name']])
+    cur = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
     entry = cur.fetchall()
     return render_template('view_char.html', **locals())
 
@@ -657,7 +694,7 @@ def roll_wisdom():
         mod_wisdom = "+10"
     # Must grab the character from the database again or else the view character page won't be filled out.
     db = get_db()
-    cur = db.execute('select * from char_sheets where char_name = ?', [request.form['char_name']])
+    cur = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
     entry = cur.fetchall()
     return render_template('view_char.html', **locals())
 
@@ -716,7 +753,7 @@ def roll_charisma():
         mod_charisma = "+10"
     # Must grab the character from the database again or else the view character page won't be filled out.
     db = get_db()
-    cur = db.execute('select * from char_sheets where char_name = ?', [request.form['char_name']])
+    cur = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
     entry = cur.fetchall()
     return render_template('view_char.html', **locals())
 

@@ -50,3 +50,7 @@ details {
 ol {
     padding: 5px;
 }
+
+.flash {
+    background-color: blue;
+}

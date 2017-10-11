@@ -14,6 +14,7 @@
                     {% if not session.logged_in %}
                         <li><a href="{{ url_for('login') }}">Login</a></li>
                     {% else %}
+                        <li>Logged in as:  {{ session['username'] }}</li>
                         <li><a href="{{ url_for('logout') }}">Logout</a></li>
                     {% endif %}
                 </ul>
@@ -29,6 +30,7 @@
                 {% endwith %}
                 {% if session.logged_in %}
                     <form action="{{ url_for('create') }}" method="POST">
+                        <input type="hidden" name="author" value="{{ session['username'] }}">
                         Character Name: <input type="text" size="20" name="char_name" value="Name">
                         Class: <input type="text" size="20" name="char_class" value="Basic">
                         Level: <input type="number" min="1" value="1" name="char_lvl"><br>
@@ -57,12 +59,13 @@
                         <textarea name="char_weapons" rows="10" cols="10">Type weapons and modifiers here.</textarea>
                         <textarea name="char_inv" rows="10" cols="10">Type anything you have in your inventory here.</textarea>
                         <textarea name="char_skills" rows="10" cols="10">Type all of your character's skills here.</textarea>
+                        <textarea name="char_notes" rows="10" cols="10">Type any notes you would like here.</textarea>
                         <input type="submit" value="Create">
                     </form>
                     <a href="/init_db/">Clear Characters</a>
                 {% endif %}
                 <ol class="char_list">
-                    <h2>Character List</h2>
+                    <h2>Your Character List</h2>
                     {% for character in entries %}
                     <li>Character Name: {{ character.char_name }}
                         Class: {{ character.char_class }}
@@ -79,6 +82,7 @@
                         Perception: {{ character.char_perception }}<br>
                         Weapons: {{ character.char_weapons }}<br>
                         Inventory: {{ character.char_inv }}<br>
+                        Notes: {{ character.char_notes }}<br>
                         Skills: {{ character.char_skills }}<br>
                         <form name="view_char" action="/view_char" method="POST">
                             <input type="hidden" name="to_view" value="{{ character.char_name }}">
