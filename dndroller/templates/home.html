@@ -8,19 +8,30 @@
         <div>
             <div class="header"></div>
             <h2>Welcome to my DnD Site!</h2>
-                <ul>
+                 <ul>
                     <li><a href="{{ url_for('index') }}" class="active">Home</a></li>
                     <li><a href="{{ url_for('all_dice') }}">Roll Dice</a></li>
                     {% if not session.logged_in %}
                         <li><a href="{{ url_for('login') }}">Login</a></li>
                     {% else %}
+                        <li>Logged in as: {{ session['username'] }}</li>
+                        <li><a href="{{ url_for('char_list') }}">My Character Sheets</a></li>
                         <li><a href="{{ url_for('logout') }}">Logout</a></li>
                     {% endif %}
-                </ul>
+                 </ul>
             <div class="content"></div>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="flash">
+                            {% for message in messages %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
                 <p>Choose from any of the above links:<br>
                 The 'Roll Dice' link takes you to a table where you can roll any number of d4s, d6s, d8s, d10s, and/or d20s as you want, with modifiers!<br>
-                To Create a character, you must first log in with the admin account information, located in the main.py file. Once logged in, you are able to create a character and the information will be added to the database table and displayed on the bottom of the page.
+                To Create a character, you must first log in or register an account. Once logged in, you are able to create characters and the information will be added to the database table and displayed on the bottom of the page. Characters are saved only to that user, and not shared between users.<br>
                 <a href="{{ url_for('init_db') }}">Initialize Database</a>
             <div class="footer"></div>
         </div>

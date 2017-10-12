@@ -8,16 +8,18 @@
         <div>
             <div class="header">
                 <h2>DnD Dice Roller</h2>
-                <ul>
-                    <li><a href="{{ url_for('index') }}">Home</a></li>
-                    <li><a href="{{ url_for('all_dice') }}" class="active">Roll Dice</a></li>
+                  <ul>
+                    <li><a href="{{ url_for('index') }}" class="active">Home</a></li>
+                    <li><a href="{{ url_for('all_dice') }}">Roll Dice</a></li>
                     {% if not session.logged_in %}
-                        <li><a href="{{ url_for('login')}}">Login</a></li>
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
                     {% else %}
-                        <li><a href="{{ url_for('logout')}}">Logout</a></li>
+                        <li>Logged in as: {{ session['username'] }}</li>
+                        <li><a href="{{ url_for('char_list') }}">My Character Sheets</a></li>
+                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
                     {% endif %}
-                </ul>
-            </div>
+                 </ul>
+             </div>
             <div class="content">
                 <table>
                     <form action="/roll_all/" method="POST">

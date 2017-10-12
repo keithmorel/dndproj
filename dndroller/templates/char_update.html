@@ -8,16 +8,18 @@
         <div>
             <div class="header"></div>
             <h2>Welcome to my DnD Site!</h2>
-                <ul>
+                  <ul>
                     <li><a href="{{ url_for('index') }}" class="active">Home</a></li>
                     <li><a href="{{ url_for('all_dice') }}">Roll Dice</a></li>
                     {% if not session.logged_in %}
                         <li><a href="{{ url_for('login') }}">Login</a></li>
                     {% else %}
+                        <li>Logged in as: {{ session['username'] }}</li>
+                        <li><a href="{{ url_for('char_list') }}">My Character Sheets</a></li>
                         <li><a href="{{ url_for('logout') }}">Logout</a></li>
                     {% endif %}
-                </ul>
-            <div class="content">
+                 </ul>
+             <div class="content">
                 <form action="/char_update/" method="POST">
                         {% for character in entry %}
                         Character Name: <input type="text" size="20" name="char_name" value="{{ character.char_name }}" readonly="true">
@@ -52,7 +54,9 @@
                         <script>
                             document.getElementById("char_class").value = "{{ character.char_class }}";
                         </script>
-                        Level: <input type="number" min="1" value="{{ character.char_lvl }}" name="char_lvl"><br>
+                        Level: <input type="number" min="1" max="20" value="{{ character.char_lvl }}" name="char_lvl">
+                        Speed: <input type="number" min="5" step="5" value="{{ character.char_speed }}" name="char_speed">
+                        Proficiency Bonus: <input type="number" min="2" max="6" value="{{ character.char_proficiency }}" name="char_proficiency"><br>
                         Alignment: <input type="radio" name="alignment" id="Lawful Good" value="Lawful Good">Lawful Good
                         <input type="radio" name="alignment" id="Neutral Good" value="Neutral Good">Neutral Good
                         <input type="radio" name="alignment" id="Chaotic Good" value="Chaotic Good">Chaotic Good
@@ -75,10 +79,11 @@
                         Wisdom: <input name="char_wisdom"type="number" value="{{ character.char_wisdom }}" min="1" max="30"></input>
                         Charisma: <input name="char_charisma"type="number" value="{{ character.char_charisma }}" min="1" max="30"></input>
                         Perception: <input name="char_perception" type="number" value="{{ character.char_perception }}" min="1" max="30"></input><br>
-                        <textarea name="char_weapons" rows="10" cols="10">{{ character.char_weapons }}</textarea>
-                        <textarea name="char_inv" rows="10" cols="10">{{ character.char_inv }}</textarea>
-                        <textarea name="char_skills" rows="10" cols="10">{{ character.char_skills }}</textarea>
-                        <textarea name="char_notes" rows="10" cols="10">{{ character.char_notes }}</textarea>
+                        Primary Weapon: <input name="char_weap_prim" type="text" value="{{ character.char_weap_prim }}"> Hit Dice: <input name="char_weap_prim_num" type="number" min="1" max"10" value="{{ character.char_weap_prim_num }}">d<input type="number" name="char_weap_prim_die" min="4" max="20" value="{{ character.char_weap_prim_die }}">
+                        Secondary Weapon: <input name="char_weap_sec" type="text" value="{{ character.char_weap_sec }}"> Hit Dice: <input name="char_weap_sec_num" type="number" min="1" max"10" value="{{ character.char_weap_sec_num }}">d<input type="number" name="char_weap_sec_die" min="4" max="20" value="{{ character.char_weap_sec_die }}">
+                        <textarea name="char_inv" rows="4" cols="30">{{ character.char_inv }}</textarea>
+                        <textarea name="char_skills" rows="4" cols="30">{{ character.char_skills }}</textarea>
+                        <textarea name="char_notes" rows="4" cols="30">{{ character.char_notes }}</textarea>
                         <input type="submit" value="Update">
                         {% endfor %}
                     </form>

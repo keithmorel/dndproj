@@ -15,6 +15,7 @@
                         <li><a href="{{ url_for('login') }}">Login</a></li>
                     {% else %}
                         <li>Logged in as: {{ session['username'] }}</li>
+                        <li><a href="{{ url_for('char_list') }}">My Character Sheets</a></li>
                         <li><a href="{{ url_for('logout') }}">Logout</a></li>
                     {% endif %}
                 </ul>
@@ -26,67 +27,90 @@
                     Class: {{ character.char_class }}<br>
                     <form name="level_up" action="/level_up/" method="POST">
                         Level: {{ character.char_lvl }}
+                        <input type="hidden" name="char_proficiency" value="{{ character.char_proficiency }}">
                         <input type="hidden" name="char_name" value="{{ character.char_name }}">
                         <input type="hidden" name="char_lvl" value="{{ character.char_lvl }}">
                         <input type="submit" value="Level Up!">
                     </form>
+                    Speed: {{ character.char_speed }} feet<br>
+                    Proficiency Bonus: + {{ character.char_proficiency }}<br>
                     Alignment: {{ character.alignment }}<br>
                     <form name="update_hp" action="/update_hp/" method="POST">
                         Health: 
                         <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <input type="number" name="curr_health" min="0" value="{{ character.curr_health }}">/<input type="number" name="max_health" value="{{ character.max_health }}">
+                        <input type="number" name="curr_health" min="0" value="{{ character.curr_health }}"> / <input type="number" name="max_health" value="{{ character.max_health }}">
                         <input type="submit" value="Update HP">
                     </form>
                     Armor: {{ character.char_armor }}<br>
-                    <form name="roll_str" action="/roll_str/" method="POST">
+                    <form name="roll_str" action="/roll_att/" method="POST">
                         Strenth: {{ character.char_str }}
+                        <input type="hidden" name="att_name" value="Strength">
                         <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <input type="hidden" name="str_val" value="{{ character.char_str }}">
+                        <input type="hidden" name="att_val" value="{{ character.char_str }}">
                         <input type="submit" value="Roll Strength">
                         {{ init_str_roll }} {{ mod_str }} {{ str_roll }}<br>
                     </form>
-                    <form name="roll_dex" action="/roll_dex/" method="POST">
+                    <form name="roll_dex" action="/roll_att/" method="POST">
                         Dexterity: {{ character.char_dex }}
+                        <input type="hidden" name="att_name" value="Dexterity">
                         <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <input type="hidden" name="dex_val" value="{{ character.char_dex }}">
+                        <input type="hidden" name="att_val" value="{{ character.char_dex }}">
                         <input type="submit" value="Roll Dexterity">
                         {{ init_dex_roll }} {{ mod_dex }} {{ dex_roll }}<br>
                     </form>
-                    <form name="roll_const" action="/roll_const/" method="POST">
+                    <form name="roll_const" action="/roll_att/" method="POST">
                         Constitution: {{ character.char_const }}
+                        <input type="hidden" name="att_name" value="Constitution">
                         <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <input type="hidden" name="const_val" value="{{ character.char_const }}">
+                        <input type="hidden" name="att_val" value="{{ character.char_const }}">
                         <input type="submit" value="Roll Constitution">
                         {{ init_const_roll }} {{ mod_const }} {{ const_roll }}<br>
                     </form>
-                    <form name="roll_intel" action="/roll_intel/" method="POST">
+                    <form name="roll_intel" action="/roll_att/" method="POST">
                         Intelligence: {{ character.char_intel }}
+                        <input type="hidden" name="att_name" value="Intelligence">
                         <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <input type="hidden" name="intel_val" value="{{ character.char_intel }}">
+                        <input type="hidden" name="att_val" value="{{ character.char_intel }}">
                         <input type="submit" value="Roll Intelligence">
                         {{ init_intel_roll }} {{ mod_intel }} {{ intel_roll }}<br>
                     </form>
-                    <form name="roll_wisdom" action="/roll_wisdom/" method="POST">
+                    <form name="roll_wisdom" action="/roll_att/" method="POST">
                         Wisdom: {{ character.char_wisdom }}
+                        <input type="hidden" name="att_name" value="Wisdom">
                         <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <input type="hidden" name="wisdom_val" value="{{ character.char_wisdom }}">
+                        <input type="hidden" name="att_val" value="{{ character.char_wisdom }}">
                         <input type="submit" value="Roll Wisdom">
                         {{ init_wisdom_roll }} {{ mod_wisdom }} {{ wisdom_roll }}<br>
                     </form>
-                    <form name="roll_charisma" action="/roll_charisma/" method="POST">
+                    <form name="roll_charisma" action="/roll_att/" method="POST">
                         Charisma: {{ character.char_charisma }}
+                        <input type="hidden" name="att_name" value="Charisma">
                         <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <input type="hidden" name="charisma_val" value="{{ character.char_charisma }}">
+                        <input type="hidden" name="att_val" value="{{ character.char_charisma }}">
                         <input type="submit" value="Roll Charisma">
                         {{ init_charisma_roll }} {{ mod_charisma }} {{ charisma_roll }}<br>
                     </form>
                     Perception: {{ character.char_perception }}<br>                   
-                    <form name="update_weapons" action="/update_weapons/" method="POST">
-                        Weapons:
+                    <form name="roll_primary" action="/roll_attack/" method="POST">
+                        Primary Weapon: {{ character.char_weap_prim }} Hit Dice: {{ character.char_weap_prim_num }}d{{ character.char_weap_prim_die }}
+                        <input type="hidden" name="weapon" value="Primary">
                         <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <textarea name="char_weapons" rows="3" cols="30">{{ character.char_weapons }}</textarea>
-                        <input type="submit" value="Update Weapons">
+                        <input type="hidden" name="char_weap_num" value="{{ character.char_weap_prim_num }}">
+                        <input type="hidden" name="char_weap_die" value="{{ character.char_weap_prim_die }}">
+                        <input type="submit" value="Attack!">
+                        {{ prim_result }}
                     </form>
+                    {% if character.char_weap_sec != '' %}
+                        <form name="roll_secondary" action="/roll_attack/" method="POST">
+                            Secondary Weapon: {{ character.char_weap_sec }} Hit Dice: {{ character.char_weap_sec_num }}d{{ character.char_weap_sec_die }}
+                            <input type="hidden" name="weapon" value="Secondary">
+                            <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                            <input type="hidden" name="char_weap_num" value="{{ character.char_weap_sec_num}}">
+                            <input type="hidden" name="char_weap_die" value="{{ character.char_weap_sec_die }}">
+                            <input type="submit" value="Attack!">
+                            {{ sec_result }}
+                    </form>
+                    {% endif %}
                     <form name="update_inv" action="/update_inv/" method="POST">
                         Inventory:
                         <input type="hidden" name="char_name" value="{{ character.char_name }}">

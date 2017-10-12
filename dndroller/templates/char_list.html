@@ -14,7 +14,8 @@
                     {% if not session.logged_in %}
                         <li><a href="{{ url_for('login') }}">Login</a></li>
                     {% else %}
-                        <li>Logged in as:  {{ session['username'] }}</li>
+                        <li>Logged in as: {{ session['username'] }}</li>
+                        <li><a href="{{ url_for('char_list') }}">My Character Sheets</a></li>
                         <li><a href="{{ url_for('logout') }}">Logout</a></li>
                     {% endif %}
                 </ul>
@@ -60,7 +61,12 @@
                             <option value="Warlock">Warlock</option>
                             <option value="Wizard">Wizard</option>
                         </select>
-                        Level: <input type="number" min="1" value="1" name="char_lvl"><br>
+                        <script>
+                            document.getElementById("char_class").value = "Fighter";
+                        </script>
+                        Level: <input type="number" min="1" max="20" value="1" name="char_lvl">
+                        Speed: <input type="number" min="5" step="5" value="25" name="char_speed">
+                        Proficiency <input type="number" min="2" max="6" value="2" name="char_proficiency"><br> 
                         Alignment: <input type="radio" name="alignment" value="Lawful Good">Lawful Good
                         <input type="radio" name="alignment" id="Neutral Good" value="Neutral Good">Neutral Good
                         <input type="radio" name="alignment" id="Chaotic Good" value="Chaotic Good">Chaotic Good
@@ -83,10 +89,11 @@
                         Wisdom: <input name="char_wisdom"type="number" value="11" min="1" max="30"></input>
                         Charisma: <input name="char_charisma"type="number" value="11" min="1" max="30"></input>
                         Perception: <input name="char_perception" type="number" value="11" min="1" max="30"></input><br>
-                        <textarea name="char_weapons" rows="10" cols="10">Type weapons and modifiers here.</textarea>
-                        <textarea name="char_inv" rows="10" cols="10">Type anything you have in your inventory here.</textarea>
-                        <textarea name="char_skills" rows="10" cols="10">Type all of your character's skills here.</textarea>
-                        <textarea name="char_notes" rows="10" cols="10">Type any notes you would like here.</textarea>
+                        Primary Weapon: <input type="text" name="char_weap_prim" value="Sword"> Hit Dice: <input type="number" min="1" max="10" value="1" name="char_weap_prim_num">d<input type="number" min="4" max="20" value="4" name="char_weap_prim_die">
+                        Secondary Weapon (optional): <input type="text" name="char_weap_sec"> Hit Dice: <input type="number" min="1" max="10" name="char_weap_sec_num">d<input type="number" min="4" max="20" name="char_weap_sec_die"><br>
+                        <textarea name="char_inv" rows="4" cols="30">Type anything you have in your inventory here.</textarea>
+                        <textarea name="char_skills" rows="4" cols="30">Type all of your character's skills here.</textarea>
+                        <textarea name="char_notes" rows="4" cols="30">Type any notes you would like here.</textarea>
                         <input type="submit" value="Create">
                     </form>
                     <a href="/init_db/">Clear Characters</a>
@@ -97,7 +104,9 @@
                     <li>Character Name: {{ character.char_name }}
                         Race: {{ character.char_race }}
                         Class: {{ character.char_class }}
-                        Level: {{ character.char_lvl }}
+                        Level: {{ character.char_lvl }}<br>
+                        Speed: {{ character.char_speed }} feet
+                        Proficiency + {{ character.char_proficiency }}
                         Alignment: {{ character.alignment }}<br>
                         Health: {{ character.curr_health }} / {{ character.max_health }}
                         Armor: {{ character.char_armor }}<br>
@@ -108,7 +117,10 @@
                         Wisdom: {{ character.char_wisdom }}
                         Charisma: {{ character.char_charisma }}
                         Perception: {{ character.char_perception }}<br>
-                        Weapons: {{ character.char_weapons }}<br>
+                        Primary Weapon: {{ character.char_weap_prim }} {{ character.char_weap_prim_num }}d{{ character.char_weap_prim_die }}<br>
+                        {% if character.char_weap_sec != '' %}
+                            Secondary Weapon: {{ character.char_weap_sec }} {{ character.char_weap_sec_num }}d{{ character.char_weap_sec_die }}<br>
+                        {% endif %}
                         Inventory: {{ character.char_inv }}<br>
                         Notes: {{ character.char_notes }}<br>
                         Skills: {{ character.char_skills }}<br>
