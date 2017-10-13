@@ -35,11 +35,46 @@
                         Character Name: <input type="text" size="20" name="char_name" value="Name">
                         Race: <select name="char_race" id="char_race">
                             <option value="Dwarf">Dwarf</option>
+                            <option value="">----</option>
+                            <option value="Hill Dwarf">Hill Dwarf</option>
+                            <option value="Mountain Dwarf">Mountain Dwarf</option>
+                            <option value="">----</option>
                             <option value="Elf">Elf</option>
+                            <option value="">----</option>
+                            <option value="High Elf">High Elf</option>
+                            <option value="Wood Elf">Wood Elf</option>
+                            <option value="DarkElf">Dark Elf</option>
+                            <option value="">----</option>
                             <option value="Halfling">Halfling</option>
+                            <option value="">----</option>
+                            <option value="Lightfoot">Lightfoot</option>
+                            <option value="Stout">Stout</option>
+                            <option value="">----</option>
                             <option value="Human">Human</option>
+                            <option value="">----</option>
+                            <option value="Calishite">Calishite</option>
+                            <option value="Chondathan">Chondathan</option>
+                            <option value="Damaran">Damaran</option>
+                            <option value="Illuskan">Illuskan</option>
+                            <option value="Mulan">Mulan</option>
+                            <option value="Rashemi">Rashemi</option>
+                            <option value="Shou">Shou</option>
+                            <option value="Tethyrian">Tethyrian</option>
+                            <option value="Turami">Turami</option>
+                            <option value="">----</option>
                             <option value="Dragonborn">Dragonborn</option>
+                            <option value="">----</option>
+                            <option value="Aurak">Aurak</option>
+                            <option value="Baaz">Baaz</option>
+                            <option value="Bozak">Bozak</option>
+                            <option value="Kapak">Kapak</option>
+                            <option value="Sivak">Sivak</option>
+                            <option value="">----</option>
                             <option value="Gnome">Gnome</option>
+                            <option value="">----</option>
+                            <option value="Forest Gnome">Forest Gnome</option>
+                            <option value="Rock Gnome">Rock Gnome</option>
+                            <option value="">----</option>
                             <option value="Half-Elf">Half-Elf</option>
                             <option value="Half-Orc">Half-Orc</option>
                             <option value="Tiefling">Tiefling</option>
@@ -81,7 +116,7 @@
                             document.getElementById("Neutral").checked = true;
                         </script>
                         Health: <input name="curr_health" type="number" min="0" value="50"> / <input name="max_health" type="number" value="50">
-                        Armor: <input name="char_armor" type="number" min="0" value="0"></input>
+                        Armor: <input name="char_armor" type="number" min="0" value="0"></input><br>
                         Strength: <input name="char_str" type="number" value="11" min="1" max="30"></input>
                         Dexterity: <input name="char_dex" type="number" value="11" min="1" max="30"></input>
                         Constitution: <input name="char_const" type="number" value="11" min="1" max="30"></input>
@@ -91,9 +126,9 @@
                         Perception: <input name="char_perception" type="number" value="11" min="1" max="30"></input><br>
                         Primary Weapon: <input type="text" name="char_weap_prim" value="Sword"> Hit Dice: <input type="number" min="1" max="10" value="1" name="char_weap_prim_num">d<input type="number" min="4" max="20" value="4" name="char_weap_prim_die">
                         Secondary Weapon (optional): <input type="text" name="char_weap_sec"> Hit Dice: <input type="number" min="1" max="10" name="char_weap_sec_num">d<input type="number" min="4" max="20" name="char_weap_sec_die"><br>
-                        <textarea name="char_inv" rows="4" cols="30">Type anything you have in your inventory here.</textarea>
-                        <textarea name="char_skills" rows="4" cols="30">Type all of your character's skills here.</textarea>
-                        <textarea name="char_notes" rows="4" cols="30">Type any notes you would like here.</textarea>
+                        <textarea name="char_inv" rows="4" cols="30">Inventory</textarea>
+                        <textarea name="char_skills" rows="4" cols="30">Skills</textarea>
+                        <textarea name="char_notes" rows="4" cols="30">Notes</textarea>
                         <input type="submit" value="Create">
                     </form>
                     <a href="/init_db/">Clear Characters</a>

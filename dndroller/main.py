@@ -38,6 +38,7 @@ def init_db():
     db.execute('insert into user_list (username, password) values (?, ?)', [app.config['USERNAME'], app.config['PASSWORD']])
     db.commit()
     logout()
+    flash('Reset database')
     return render_template('home.html')
 
 @app.teardown_appcontext
@@ -134,6 +135,10 @@ def create():
         flash('Character with that name already exists. Try another one')
         return redirect('char_list')
     # If they don't exist, create them
+    check = char_checker(request.form)
+    if check != '':
+        flash(check)
+        return redirect(url_for('char_list'))
     db.execute('insert into char_sheets (author, char_name, char_race, char_class, char_lvl, char_speed, char_proficiency, alignment, curr_health, max_health, char_armor, char_str, char_dex, char_const, char_intel, char_wisdom, char_charisma, char_perception, char_weap_prim, char_weap_prim_num, char_weap_prim_die, char_weap_sec, char_weap_sec_num, char_weap_sec_die, char_inv, char_skills, char_notes) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [session['username'], request.form['char_name'], request.form['char_race'], request.form['char_class'], request.form['char_lvl'], request.form['char_speed'], request.form['char_proficiency'], request.form['alignment'], request.form['curr_health'], request.form['max_health'], request.form['char_armor'], request.form['char_str'], request.form['char_dex'], request.form['char_const'], request.form['char_intel'], request.form['char_wisdom'], request.form['char_charisma'], request.form['char_perception'], request.form['char_weap_prim'], request.form['char_weap_prim_num'], request.form['char_weap_prim_die'], request.form['char_weap_sec'], request.form['char_weap_sec_num'], request.form['char_weap_sec_die'], request.form['char_inv'], request.form['char_skills'], request.form['char_notes']])
     db.commit()
     return redirect(url_for('char_list'))
@@ -165,6 +170,12 @@ def update():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
+    check = char_checker(request.form)
+    if check != '':
+        cur = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
+        entry = cur.fetchall()
+        flash(check)
+        return render_template('char_update.html', **locals())
     db.execute('update char_sheets set char_race = ?, char_class = ?, char_lvl = ?, char_speed = ?, char_proficiency = ?, alignment = ?, curr_health = ?, max_health = ?, char_armor = ?, char_str = ?, char_dex = ?, char_const = ?, char_intel = ?, char_wisdom = ?, char_charisma = ?, char_perception = ?, char_weap_prim = ?, char_weap_prim_num = ?, char_weap_prim_die = ?, char_weap_sec = ?, char_weap_sec_num = ?, char_weap_sec_die = ?, char_inv = ?, char_skills = ?, char_notes = ? where char_name = ? and author = ?', [request.form['char_race'], request.form['char_class'], request.form['char_lvl'], request.form['char_speed'], request.form['char_proficiency'], request.form['alignment'], request.form['curr_health'], request.form['max_health'], request.form['char_armor'], request.form['char_str'], request.form['char_dex'], request.form['char_const'], request.form['char_intel'], request.form['char_wisdom'], request.form['char_charisma'], request.form['char_perception'], request.form['char_weap_prim'], request.form['char_weap_prim_num'], request.form['char_weap_prim_die'], request.form['char_weap_sec'], request.form['char_weap_sec_num'], request.form['char_weap_sec_die'], request.form['char_inv'], request.form['char_skills'], request.form['char_notes'], request.form['char_name'], session['username']])
     db.commit()
     return redirect(url_for('char_list'))
@@ -357,17 +368,6 @@ def roll_all():
 
     return render_template('./mult_dice.html', **locals())
 
-@app.route("/level_up/", methods=['POST'])
-def level_up():
-    curr_lvl = int(request.form['char_lvl'])
-    curr_lvl += 1
-    proficiency = request.form['char_proficiency']
-    db = get_db()
-    db.execute('update char_sheets set char_lvl = ?, char_proficiency = ? where char_name = ? and author = ?', [curr_lvl, proficiency, request.form['char_name'], session['username']])
-    db.commit()
-    entry = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
-    return render_template('view_char.html', **locals())
-
 @app.route("/update_inv/", methods=['POST'])
 def update_inv():
     curr_inv = request.form['char_inv']
@@ -382,14 +382,6 @@ def update_notes():
     curr_notes = request.form['char_notes']
     db = get_db()
     db.execute('update char_sheets set char_notes = ? where char_name = ? and author = ?', [curr_notes, request.form['char_name'], session['username']])
-    db.commit()
-    entry = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
-    return render_template('view_char.html', **locals())
-
-@app.route("/update_hp/", methods=['POST'])
-def update_hp():
-    db = get_db()
-    db.execute('update char_sheets set curr_health = ?, max_health = ? where char_name = ? and author = ?', [request.form['curr_health'], request.form['max_health'], request.form['char_name'], session['username']])
     db.commit()
     entry = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
     return render_template('view_char.html', **locals())
@@ -507,6 +499,96 @@ def roll_att():
     cur = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
     entry = cur.fetchall()
     return render_template('view_char.html', **locals())
+
+# Function that checks various things about the character sheet to make sure the user isn't cheating with updating their stats. 
+# Runs on both creating and updating a character and returns a string to be flashed on the screen about what you did wrong.
+def char_checker(form):
+    # Loop through the form
+    secondary_weap_check = []
+    for i in form:
+        # If any value is empty
+        if i == 'char_weap_sec':
+            secondary_weap_check += [form['char_weap_sec']]
+            pass
+        elif i == 'char_weap_sec_num':
+            secondary_weap_check += [form['char_weap_sec_num']]
+            pass
+        elif i == 'char_weap_sec_die':
+            secondary_weap_check += [form['char_weap_sec_die']]
+            pass
+        if form[i] == '':
+            # Inventory, skills, and notes are optional, even though they have default values
+            if i == 'char_weap_sec':
+                pass
+            elif i == 'char_weap_sec_num':
+                pass
+            elif i == 'char_weap_sec_die':
+                pass
+            elif i == 'char_inv':
+                pass
+            elif i == 'char_skills':
+                pass
+            elif i == 'char_notes':
+                pass
+            else:
+                return str(i) + ' was not filled out.'
+    if secondary_weap_check[0] == '':
+        if secondary_weap_check[1] == '' and secondary_weap_check[2] == '':
+            pass
+        else:
+            return 'You must fill out all 3 fields for the secondary weapon if you want to add one.'
+    if secondary_weap_check[1] == '':
+        if secondary_weap_check[0] == '' and secondary_weap_check[2] == '':
+            pass
+        else:
+            return 'You must fill out all 3 fields for the secondary weapon if you want to add one.'
+    if secondary_weap_check[2] == '':
+        if secondary_weap_check[0] == '' and secondary_weap_check[1] == '':
+            pass
+        else:
+            return 'You must fill out all 3 fields for the secondary weapon if you want to add one.'
+
+    level = int(form['char_lvl'])
+    proficiency = int(form['char_proficiency'])
+    if level < 5:
+        if proficiency > 2:
+            return 'Your proficiency is too high for a level ' + str(level) + '. It should be at 2.'
+    if level >= 5 and level < 9:
+        if proficiency < 3:
+            return 'Your proficiency is too low for a level ' + str(level) + '. It should be at 3.'
+        if proficiency > 3:
+            return 'Your proficiency is too high for a level ' + str(level) + '. It should be at 3.'
+    if level >= 9 and level < 13:
+        if proficiency < 4:
+            return 'Your proficiency is too low for a level ' + str(level) + '. It should be at 4.'
+        if proficiency > 4:
+            return 'Your proficiency is too high for a level ' + str(level) + '. It should be at 4.'
+    if level >= 13 and level < 17:
+        if proficiency < 5:
+            return 'Your proficiency is too low for a level ' + str(level) + '. It should be at 5.'
+        if proficiency > 5:
+            return 'Your proficiency is too high for a level ' + str(level) + '. It should be at 5.'
+    if level >= 17:
+        if proficiency < 5:
+            return 'Your proficiency is too low for a level ' + str(level) + '. It should be at 6.'
+    attributes = { 
+            'Strength': int(form['char_str']),
+            'Dexterity': int(form['char_dex']),
+            'Constitution': int(form['char_const']),
+            'Intelligence': int(form['char_intel']),
+            'Wisdom': int(form['char_wisdom']),
+            'Charisma': int(form['char_charisma']) }
+    for key in attributes:
+        if attributes[key] > 20:
+            return 'You cannot increase ' + key + ' over level 20.'
+    current_hp = int(form['curr_health'])
+    max_hp = int(form['max_health'])
+    if current_hp > max_hp:
+        return 'Current health cannot be higher than max health.'
+    if current_hp == 0:
+        flash('Your character is either unconcious or, if the rest of the damage to take is more than your max health, dead.')
+
+    return ''    
 
 # Runs the server in debug mode when file is run with "python3 main.py"
 if __name__ == '__main__':
