@@ -186,9 +186,47 @@ def view_char():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    cur = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['to_view'], session['username']])
+    cur = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['to_view'], request.form['user']])
     entry = cur.fetchall()
     return render_template('view_char.html', **locals())
+
+@app.route('/game_list')
+def game_list():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    cur = db.execute('select * from dm_games where dm_name = ?', [session['username']])
+    games = cur.fetchall()
+    cur = db.execute('select * from char_sheets where dm = ?', [session['username']])
+    players = cur.fetchall()
+    return render_template('dm_game.html', **locals())
+
+@app.route('/create_game', methods=['POST'])
+def create_game():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    check = db.execute('select * from dm_games where dm_name = ? and game_name = ?', [session['username'], request.form['game_name']])
+    if check.fetchall() != []:
+        flash('Game already exists with this name. Try another one.')
+        return redirect(url_for('game_list'))
+    cur = db.execute('insert into dm_games (dm_name, game_name) values (?, ?)', [session['username'], request.form['game_name']])
+    db.commit()
+    return redirect(url_for('game_list'))
+
+@app.route('/add_to_game/', methods=['POST'])
+def add_to_game():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    to_add = request.form['char_name']
+    player = db.execute('select * from char_sheets where char_name = ? and author = ?', [to_add, request.form['author']])
+    if player.fetchall() == []:
+        flash('That player does not exist for that user. Try a different user or character name.')
+        return redirect(url_for('game_list'))
+    db.execute('update char_sheets set dm = ?', [session['username']])
+    db.commit()
+    return redirect(url_for('game_list'))
 
 # Route to page that gives more information on all of the alignments
 @app.route('/alignment_details')
@@ -506,7 +544,7 @@ def char_checker(form):
     # Loop through the form
     secondary_weap_check = []
     for i in form:
-        # If any value is empty
+        # Adds the secondary weapon info to be checked separately
         if i == 'char_weap_sec':
             secondary_weap_check += [form['char_weap_sec']]
             pass
@@ -530,8 +568,12 @@ def char_checker(form):
                 pass
             elif i == 'char_notes':
                 pass
+            elif i == 'game_pwd':
+                pass
             else:
                 return str(i) + ' was not filled out.'
+
+    # Check if either all 3 secondary weapon fields are filled out, or all 3 are empty
     if secondary_weap_check[0] == '':
         if secondary_weap_check[1] == '' and secondary_weap_check[2] == '':
             pass
@@ -547,7 +589,8 @@ def char_checker(form):
             pass
         else:
             return 'You must fill out all 3 fields for the secondary weapon if you want to add one.'
-
+    
+    # Check if the proficiency bonus is correct for your level
     level = int(form['char_lvl'])
     proficiency = int(form['char_proficiency'])
     if level < 5:
@@ -571,6 +614,8 @@ def char_checker(form):
     if level >= 17:
         if proficiency < 5:
             return 'Your proficiency is too low for a level ' + str(level) + '. It should be at 6.'
+
+    # Checks to make sure the user hasn't changed any of their attributes to be greater than 20
     attributes = { 
             'Strength': int(form['char_str']),
             'Dexterity': int(form['char_dex']),
@@ -581,6 +626,8 @@ def char_checker(form):
     for key in attributes:
         if attributes[key] > 20:
             return 'You cannot increase ' + key + ' over level 20.'
+
+    # Check to make sure the current health is less than or equal to the max health
     current_hp = int(form['curr_health'])
     max_hp = int(form['max_health'])
     if current_hp > max_hp:

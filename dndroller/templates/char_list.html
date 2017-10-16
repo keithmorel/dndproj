@@ -137,6 +137,9 @@
                     <h2>Your Character List</h2>
                     {% for character in entries %}
                     <li>Character Name: {{ character.char_name }}
+                        {% if character.dm != None %}
+                            DM: {{ character.dm }}
+                        {% endif %}
                         Race: {{ character.char_race }}
                         Class: {{ character.char_class }}
                         Level: {{ character.char_lvl }}<br>
@@ -161,6 +164,7 @@
                         Skills: {{ character.char_skills }}<br>
                         <form name="view_char" action="/view_char" method="POST">
                             <input type="hidden" name="to_view" value="{{ character.char_name }}">
+                            <input type="hidden" name="user" value="{{ character.author }}">
                             <input type="submit" value="View">
                         </form>
                         <form name="update_char" action="/update_char" method="POST">

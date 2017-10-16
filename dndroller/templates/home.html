@@ -16,6 +16,7 @@
                     {% else %}
                         <li>Logged in as: {{ session['username'] }}</li>
                         <li><a href="{{ url_for('char_list') }}">My Character Sheets</a></li>
+                        <li><a href="{{ url_for('game_list') }}">My Games</a></li>
                         <li><a href="{{ url_for('logout') }}">Logout</a></li>
                     {% endif %}
                  </ul>

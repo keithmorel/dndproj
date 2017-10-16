@@ -27,7 +27,8 @@ create table char_sheets (
     char_weap_sec_die integer,
     char_inv blob,
     char_skills blob,
-    char_notes blob
+    char_notes blob,
+    dm text
 );
 
 drop table if exists user_list;
@@ -35,4 +36,11 @@ create table user_list (
     id integer primary key autoincrement,
     username text not null,
     password
+);
+
+drop table if exists dm_games;
+create table dm_games (
+    id integer primary key autoincrement,
+    dm_name text not null,
+    game_name text not null
 );
