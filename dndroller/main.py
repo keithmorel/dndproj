@@ -35,7 +35,7 @@ def init_db():
     db = get_db()
     with app.open_resource('schema.sql', mode='r') as f:
         db.cursor().executescript(f.read())
-    db.execute('insert into user_list (username, password) values (?, ?)', [app.config['USERNAME'], app.config['PASSWORD']])
+    db.execute('insert into user_list (username, password, is_dm) values (?, ?, ?)', [app.config['USERNAME'], app.config['PASSWORD'], 'True'])
     db.commit()
     logout()
     flash('Reset database')
@@ -99,7 +99,7 @@ def register():
             flash('User already exists. Try logging in with info instead')
             return redirect(url_for('login'))
         # If not, insert into database, login, and redirect to character list page
-        cur = db.execute('insert into user_list (username, password) values (?, ?)', [request.form['username'], request.form['password']])
+        db.execute('insert into user_list (username, password, is_dm) values (?, ?, ?)', [request.form['username'], request.form['password'], request.form['is_dm']])
         db.commit()
         flash('Successfully registered')
         session['logged_in'] = True
@@ -190,12 +190,17 @@ def view_char():
     entry = cur.fetchall()
     return render_template('view_char.html', **locals())
 
+# Route to a page that displays 
 @app.route('/game_list')
 def game_list():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    cur = db.execute('select * from dm_games where dm_name = ?', [session['username']])
+    is_dm = db.execute('select is_dm from user_list where username = ?', [session['username']])
+    if is_dm.fetchone()[0] == 'False':
+        flash('You must be logged into a DM account to access this page.')
+        return redirect(request.referrer)
+    cur = db.execute('select * from games where dm_name = ?', [session['username']])
     games = cur.fetchall()
     cur = db.execute('select * from char_sheets where dm = ?', [session['username']])
     players = cur.fetchall()
@@ -206,15 +211,39 @@ def create_game():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    check = db.execute('select * from dm_games where dm_name = ? and game_name = ?', [session['username'], request.form['game_name']])
+    check = db.execute('select * from games where dm_name = ?', [session['username']]) 
     if check.fetchall() != []:
-        flash('Game already exists with this name. Try another one.')
+        flash('You are already hosting a game with this account.')
         return redirect(url_for('game_list'))
-    cur = db.execute('insert into dm_games (dm_name, game_name) values (?, ?)', [session['username'], request.form['game_name']])
+    db.execute('insert into games (dm_name, game_name) values (?, ?)', [session['username'], request.form['game_name']])
     db.commit()
     return redirect(url_for('game_list'))
 
-@app.route('/add_to_game/', methods=['POST'])
+@app.route('/delete_game/', methods=['POST'])
+def delete_game():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    cur = db.execute('select * from char_sheets where dm = ? and game = ?', [request.form['dm_name'], request.form['game_name']])
+    characters = cur.fetchall()
+    for char in characters:
+        print(char)
+    db.execute('delete from games where dm_name = ? and game_name = ?', [request.form['dm_name'], request.form['game_name']])
+    db.commit()
+    return redirect(url_for('game_list'))
+
+@app.route('/view_game', methods=['POST'])
+def view_game():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    cur = db.execute('select * from games where dm_name = ?', [session['username']])
+    games = cur.fetchall()
+    cur = db.execute('select * from char_sheets where dm = ?', [session['username']])
+    players = cur.fetchall()
+    return render_template('game_home.html', **locals())
+
+@app.route('/add_player_to_game/', methods=['POST'])
 def add_to_game():
     if not session.get('logged_in'):
         abort(401)
@@ -224,9 +253,36 @@ def add_to_game():
     if player.fetchall() == []:
         flash('That player does not exist for that user. Try a different user or character name.')
         return redirect(url_for('game_list'))
-    db.execute('update char_sheets set dm = ?', [session['username']])
+    db.execute('update char_sheets set dm = ?, game = ? where char_name = ? and author = ?', [session['username'], request.form['game'], to_add, request.form['author']])
     db.commit()
     return redirect(url_for('game_list'))
+
+@app.route('/npc_list')
+def npc_list():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    cur = db.execute('select * from npcs where dm = ?', [session['username']])
+    npcs = cur.fetchall()
+    return render_template('npc_list.html', **locals())
+
+@app.route('/create_npc', methods=['POST'])
+def create_npc():
+    db = get_db()
+    check = db.execute('select * from npcs where name = ? and dm = ?', [request.form['name'], session['username']])
+    if check.fetchall() != []:
+        flash('This NPC already exists in this game.')
+        return redirect(url_for('npc_list'))
+    db.execute('insert into npcs (name, info, dm) values (?, ?, ?)', [request.form['name'], request.form['info'], session['username']])
+    db.commit()
+    return redirect(url_for('npc_list'))
+
+@app.route('/delete_npc/', methods=['POST'])
+def delete_npc():
+    db = get_db()
+    db.execute('delete from npcs where name = ? and dm = ?', [request.form['to_delete'], session['username']])
+    db.commit()
+    return redirect(url_for('npc_list'))
 
 # Route to page that gives more information on all of the alignments
 @app.route('/alignment_details')

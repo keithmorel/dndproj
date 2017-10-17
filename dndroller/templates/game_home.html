@@ -10,14 +10,13 @@
             <h2>Welcome to my DnD Site!</h2>
                 <ul>
                     <li><a href="{{ url_for('index') }}" class="active">Home</a></li>
-                    <li><a href="{{ url_for('all_dice') }}">Roll Dice</a></li>
                     {% if not session.logged_in %}
                         <li><a href="{{ url_for('login') }}">Login</a></li>
                     {% else %}
                         <li>Logged in as: {{ session['username'] }}</li>
-                        <li><a href="{{ url_for('char_list') }}">My Character Sheets</a></li>
                         <li><a href="{{ url_for('game_list') }}">My Game</a></li>
                         <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                        <li><a href="{{ url_for('npc_list') }}">NPC List</a></li>
                     {% endif %}
                 </ul>
             <div class="content">
@@ -30,34 +29,10 @@
                         </div>
                     {% endif %}
                 {% endwith %}
-                {% if session.logged_in %}
-                    <form action="{{ url_for('create_game') }}" method="POST">
-                        <input type="text" name="game_name" value="MyGame">
-                        <input type="submit" value="Create">
-                    </form>
-                {% endif %}
                 <ol class="char_list">
-                    <h2>Your Game</h2>
                     {% for game in games %}
-                        Owner: {{ game.dm_name }}
-                        Name: {{ game.game_name }}<br>
-                    <form name="view_game" action="{{ url_for('view_game') }}" method="POST">
-                        <input type="hidden" name="game_name" value="{{ game.game_name }}">
-                        <input type="hidden" name="dm_name" value="{{ game.dm_name }}">
-                        <input type="submit" value="View">
-                    </form>
-                    <form name="delete_game" action="/delete_game/" method="POST">
-                        <input type="hidden" name="game_name" value="{{ game.game_name }}">
-                        <input type="hidden" name="dm_name" value="{{ game.dm_name }}">
-                        <input type="submit" value="Delete">
-                    </form>
+                    <h2>{{ game.game_name }}</h2>
                     <h3>Players in Game</h3>
-                    <form name="add_to_game" action="/add_player_to_game/" method="POST">
-                        <input type="hidden" name="game" value="{{ game.game_name }}">
-                        <input type="text" name="author" value="User">
-                        <input type="text" name="char_name" value="Character Name">
-                        <input type="submit" value="Add">
-                    </form>
                     {% endfor %}
                     {% for player in players %}
                         Name: {{ player.char_name }}

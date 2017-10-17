@@ -28,19 +28,31 @@ create table char_sheets (
     char_inv blob,
     char_skills blob,
     char_notes blob,
-    dm text
+    dm text,
+    game text
 );
 
 drop table if exists user_list;
 create table user_list (
     id integer primary key autoincrement,
     username text not null,
-    password
+    password text not null,
+    is_dm text not null
 );
 
-drop table if exists dm_games;
-create table dm_games (
+drop table if exists games;
+create table games (
     id integer primary key autoincrement,
     dm_name text not null,
     game_name text not null
 );
+
+drop table if exists npcs;
+create table npcs (
+    id integer primary key autoincrement,
+    name text not null,
+    info blob,
+    dm text not null
+);
+
+

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>DnD Site</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+    </head>
+    <body>
+        <div>
+            <div class="header"></div>
+            <h2>Welcome to my DnD Site!</h2>
+                <ul>
+                    <li><a href="{{ url_for('index') }}" class="active">Home</a></li>
+                    <li><a href="{{ url_for('all_dice') }}">Roll Dice</a></li>
+                    {% if not session.logged_in %}
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
+                    {% else %}
+                        <li>Logged in as: {{ session['username'] }}</li>
+                        <li><a href="{{ url_for('game_list') }}">My Game</a></li>
+                        <li><a href="{{ url_for('npc_list') }}">NPC List</a></li>
+                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% endif %}
+                </ul>
+            <div class="content">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="flash">
+                            {% for message in messages %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                {% if session.logged_in %}
+                    <form action="{{ url_for('create_npc') }}" method="POST">
+                        Name: <input type="text" name="name" value="Name"><br>
+                        <textarea name="info" rows="7" cols="50">Type all info needed for this NPC here.</textarea>
+                        <input type="submit" value="Create">
+                    </form>
+                {% endif %}
+                <ol class="char_list">
+                    <h2>NPC List</h2>
+                    {% for character in npcs %}
+                    <li>
+                        Name: {{ character.name }}
+                        Info: {{ character.info }}<br>
+                        <form action="/delete_npc/" method="POST">
+                            <input type="hidden" name="to_delete" value="{{ character.name }}">
+                            <input type="submit" value="Delete">
+                        </form>
+                    </li>
+                    {% else %}
+                        <li>No NPCs available</li>
+                    {% endfor %}
+                </ol>
+            </div>
+            <div class="footer"></div>
+        </div>
+    </body>
+</html>

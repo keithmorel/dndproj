@@ -16,11 +16,21 @@
                     {% else %}
                         <li>Logged in as: {{ session['username'] }}</li>
                         <li><a href="{{ url_for('char_list') }}">My Character Sheets</a></li>
+                        <li><a href="{{ url_for('game_list') }}">My Game</a></li>
                         <li><a href="{{ url_for('logout') }}">Logout</a></li>
                     {% endif %}
                  </ul>
              </div>
             <div class="content">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="flash">
+                            {% for message in messages %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
                 <table>
                     <form action="/roll_all/" method="POST">
                         <tr>

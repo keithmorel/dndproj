@@ -27,13 +27,23 @@
                 <form action="/register" method="POST">
                     Username: <input type="text" name="username">
                     Password: <input type="password" name="password">
+                    DM Account: <input type="radio" id="True" name="is_dm" value="True">Yes 
+                    <input type="radio" name="is_dm" id="False" value="False">No 
                     <input type="submit" value="Register">
                 </form>
+                <script>
+                    document.getElementById("False").checked = True;
+                </script>
                 <a href="{{ url_for('index') }}">Back to Home</a>
                 <h2>User List</h2>
                 <ul>
                 {% for user in users %}
-                    <li>Username: {{ user.username }} Password: {{ user.password }}</li><br>
+                    Username: {{ user.username }} Password: {{ user.password }} 
+                    {% if user.is_dm == 'True' %}
+                        DM Account?: Yes<br>
+                    {% else %}
+                        DM Account?: No<br>
+                    {% endif %}
                 {% endfor %}
                 </ul>
             </div>
