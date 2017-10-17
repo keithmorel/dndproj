@@ -190,7 +190,7 @@ def view_char():
     entry = cur.fetchall()
     return render_template('view_char.html', **locals())
 
-# Route to a page that displays 
+# Route to a page that displays basic info on the game currently being hosted by the user
 @app.route('/game_list')
 def game_list():
     if not session.get('logged_in'):
@@ -206,6 +206,7 @@ def game_list():
     players = cur.fetchall()
     return render_template('dm_game.html', **locals())
 
+# Allows you to create a game with whatevre name you like
 @app.route('/create_game', methods=['POST'])
 def create_game():
     if not session.get('logged_in'):
@@ -219,6 +220,7 @@ def create_game():
     db.commit()
     return redirect(url_for('game_list'))
 
+# Deletes just the game currently *** REMOVE ALL CHARACTERS, NPCS, AND MONSTERS AS WELL ***
 @app.route('/delete_game/', methods=['POST'])
 def delete_game():
     if not session.get('logged_in'):
@@ -232,6 +234,7 @@ def delete_game():
     db.commit()
     return redirect(url_for('game_list'))
 
+# Simple route to a page to be able to view some more information on the game and allow you to travel between different sections of the DM-controlled parts of the game
 @app.route('/view_game', methods=['POST'])
 def view_game():
     if not session.get('logged_in'):
@@ -243,6 +246,7 @@ def view_game():
     players = cur.fetchall()
     return render_template('game_home.html', **locals())
 
+# Adds a player to the game by adding a reference to the DM in the character sheet
 @app.route('/add_player_to_game/', methods=['POST'])
 def add_to_game():
     if not session.get('logged_in'):
@@ -257,6 +261,7 @@ def add_to_game():
     db.commit()
     return redirect(url_for('game_list'))
 
+# Simple route to the page where you are able to see the current list of NPCs and add more
 @app.route('/npc_list')
 def npc_list():
     if not session.get('logged_in'):
@@ -266,6 +271,7 @@ def npc_list():
     npcs = cur.fetchall()
     return render_template('npc_list.html', **locals())
 
+# Adds an NPC with a reference to the DM in its table
 @app.route('/create_npc', methods=['POST'])
 def create_npc():
     db = get_db()
@@ -277,6 +283,7 @@ def create_npc():
     db.commit()
     return redirect(url_for('npc_list'))
 
+# Deletes the NPC from the table
 @app.route('/delete_npc/', methods=['POST'])
 def delete_npc():
     db = get_db()

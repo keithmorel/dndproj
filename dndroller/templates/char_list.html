@@ -16,6 +16,7 @@
                     {% else %}
                         <li>Logged in as: {{ session['username'] }}</li>
                         <li><a href="{{ url_for('char_list') }}">My Character Sheets</a></li>
+                        <li><a href="{{ url_for('game_list') }}">My Game</a></li>
                         <li><a href="{{ url_for('logout') }}">Logout</a></li>
                     {% endif %}
                 </ul>
@@ -131,7 +132,6 @@
                         <textarea name="char_notes" rows="4" cols="30">Notes</textarea>
                         <input type="submit" value="Create">
                     </form>
-                    <a href="/init_db/">Clear Characters</a>
                 {% endif %}
                 <ol class="char_list">
                     <h2>Your Character List</h2>
