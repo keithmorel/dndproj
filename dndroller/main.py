@@ -62,7 +62,7 @@ def login():
         cur = db.execute('select * from user_list where username = ?', [user_name])
         db_user = cur.fetchone()
         # Check if the user exists
-        if db_user == None:
+        if db_user is None:
             flash('That user does not exist. Try registering this username and password instead.')
             return redirect(url_for('login'))
         # Grab username and password from the database SELECT query
@@ -163,7 +163,7 @@ def update_char():
     entry = cur.fetchall()
     return render_template('char_update.html', **locals())
 
-# Route that actually does the "updating" of the character, it really just deletes and re-inserts character. Will not delete character if some information isn't filled out. 
+# Route that actually does the "updating" of the character, it really just deletes and re-inserts character. Will not delete character if some information isn't filled out.
 # *** LOOK INTO GETTING THE UPDATE QUERY TO WORK SO IT DOESNT MOVE UPDATED CHARACTER TO BOTTOM OF LIST ***
 @app.route('/char_update/', methods=['POST'])
 def update():
@@ -212,11 +212,11 @@ def create_game():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    check = db.execute('select * from games where dm_name = ?', [session['username']]) 
+    check = db.execute('select * from games where dm_name = ?', [session['username']])
     if check.fetchall() != []:
         flash('You are already hosting a game with this account.')
         return redirect(url_for('game_list'))
-    db.execute('insert into games (dm_name, game_name) values (?, ?)', [session['username'], request.form['game_name']])
+    db.execute('insert into games (dm_name, game_name, game_notes) values (?, ?, ?)', [session['username'], request.form['game_name'], request.form['game_notes']])
     db.commit()
     return redirect(url_for('game_list'))
 
@@ -297,31 +297,58 @@ def alignment_details():
 # Default home page with all information filled in as blanks, showing you how the information is formatted.
 @app.route('/roll')
 def all_dice():
-    rolls_d4 = []    # Lists of accumulated rolls for all the different dice 
+    rolls_d4 = []    # Lists of accumulated rolls for all the different dice
     rolls_d6 = []
     rolls_d8 = []
     rolls_d10 = []
     rolls_d20 = []
     rolls_dx = []
-    mod_d4 = 0    # All the modifiers, + or -, that are added to the total of that dice's rolls, not each individual roll 
+    mod_d4 = 0    # All the modifiers, + or -, that are added to the total of that dice's rolls, not each individual roll
     mod_d6 = 0
     mod_d8 = 0
     mod_d10 = 0
     mod_d20 = 0
     mod_dx = 0
-    d4_tot = 0    # Accumulated totals of each row from the lists above, mostly just for the result calculation 
+    d4_tot = 0    # Accumulated totals of each row from the lists above, mostly just for the result calculation
     d6_tot = 0
     d8_tot = 0
     d10_tot = 0
     d20_tot = 0
     dx_tot = 0
-    result = 0    # Final result that appears at the bottom right of the table 
+    result = 0    # Final result that appears at the bottom right of the table
     return render_template('./mult_dice.html', **locals())
 
-# Main method that does the most amount of work on the site. Takes in all of the inputs and modifiers from all of the different dice available and calculates the total amount rolled for each row and total. 
+def roll_test():
+    dice_to_roll = {
+            '4':[request.form['d4_rolls'], request.form['d4_mod']],
+            '6':[request.form['d6_rolls'], request.form['d6_mod']],
+            '8':[request.form['d8_rolls'], request.form['d8_mod']],
+            '10':[request.form['d10_rolls'], request.form['d10_mod']],
+            '20':[request.form['d20_rolls'], request.form['d20_mod']],
+            str(request.form['DX']):[request.form['dx_rolls'], request.form['dx_mod']]
+    }
+    result = 0
+    rolls = []
+    for i in dice_to_roll:
+        print(dice_to_roll[i])
+        print(int(i))
+        print(int(dice_to_roll[i][0]))
+        if dice_to_roll[i][0] == '':
+            dice_to_roll[i][0] = 0
+        elif dice_to_roll[i][1] == '':
+            dice_to_roll[i][1] = 0
+        elif int(dice_to_roll[i][0]) > 0:
+            for j in range(0, int(dice_to_roll[i][0])):
+                roll = random.randint(1, int(i)) + int(dice_to_roll[i][1])
+                result += roll
+                rolls += [roll]
+    print('Result: ' + str(result) + ' = ' + str(rolls))
+    return
+
+# Main method that does the most amount of work on the site. Takes in all of the inputs and modifiers from all of the different dice available and calculates the total amount rolled for each row and total.
 @app.route("/roll_all/", methods=['POST'])
 def roll_all():
-    # Initializing a list to store the number of times to roll each individual die, using a GET request to pull this information from the inputs. 
+    # Initializing a list to store the number of times to roll each individual die, using a GET request to pull this information from the inputs.
     num_rolls = []
     num_rolls += [request.form.get('d4_rolls')]
     num_rolls += [request.form.get('d6_rolls')]
@@ -329,79 +356,79 @@ def roll_all():
     num_rolls += [request.form.get('d10_rolls')]
     num_rolls += [request.form.get('d20_rolls')]
     num_rolls += [request.form.get('dx_rolls')]
-    # Initializing a list to store the modifiers that are added or subtracted to the totals of each row using a GET request, not to each individual roll. 
-    mods = [] 
+    # Initializing a list to store the modifiers that are added or subtracted to the totals of each row using a GET request, not to each individual roll.
+    mods = []
     mods += [request.form.get('d4_mod')]
     mods += [request.form.get('d6_mod')]
     mods += [request.form.get('d8_mod')]
     mods += [request.form.get('d10_mod')]
     mods += [request.form.get('d20_mod')]
     mods += [request.form.get('dx_mod')]
-    for i in range(0,6):
+    for i in range(0, 6):
         # Error checking of number of rolls:
-        # If any of the rolls weren't filled out, don't roll them. This avoids TypeErrors with trying to add empty strings to integers. 
+        # If any of the rolls weren't filled out, don't roll them. This avoids TypeErrors with trying to add empty strings to integers.
         if num_rolls[i] == '':
             num_rolls[i] = 0
-    for j in range(0,6):
+    for j in range(0, 6):
         # Error checking of modifiers:
-        # If any modifiers weren't filled out, don't add anything. This avoids TypeErrors with trying to add empty strings to integers. 
+        # If any modifiers weren't filled out, don't add anything. This avoids TypeErrors with trying to add empty strings to integers.
         if mods[j] == '':
             mods[j] = 0
-    result = 0    # Initialize final result as 0, just in case nothing is filled out. 
-    row_tots = []   # Initialize list to hold the row totals, which will be added together at the end to the final result. 
-    for x in range(0,6):
-        # Since the dice chosen on this page are fixed and not in order, this is needed to be able to loop through the list of the number of rolls of each die and the modifiers for each die. e.g. [d4_rolls, d6_rolls, d8_rolls, d10_rolls, d20_rolls, dx_rolls], and [d4_mod, d6_mod, d8_mod, d10_mod, d20_mod, dx_mod] 
+    result = 0    # Initialize final result as 0, just in case nothing is filled out.
+    row_tots = []   # Initialize list to hold the row totals, which will be added together at the end to the final result.
+    for x in range(0, 6):
+        # Since the dice chosen on this page are fixed and not in order, this is needed to be able to loop through the list of the number of rolls of each die and the modifiers for each die. e.g. [d4_rolls, d6_rolls, d8_rolls, d10_rolls, d20_rolls, dx_rolls], and [d4_mod, d6_mod, d8_mod, d10_mod, d20_mod, dx_mod]
         if x == 0:
-            # D4 
+            # D4
             rolls_d4 = []
             d4_tot = 0
             for y in range(0, int(num_rolls[x])):
-                # Loop through rolling the die the amount of times specified by d4_rolls. 
-                curr_roll = random.randint(1,4)    # Save current roll to variable so the number is the same when called multiple times. 
-                rolls_d4 += [curr_roll]    # Add current roll to the list of rolls for this die. 
-                d4_tot += curr_roll    # Add current roll to the row total. 
-            d4_tot += int(mods[0])    # Once done with rolls for this die, add d4_mod to total. 
-            row_tots += [d4_tot]    # Add the total for the row into the list of all row totals. 
+                # Loop through rolling the die the amount of times specified by d4_rolls.
+                curr_roll = random.randint(1, 4)    # Save current roll to variable so the number is the same when called multiple times.
+                rolls_d4 += [curr_roll]    # Add current roll to the list of rolls for this die.
+                d4_tot += curr_roll    # Add current roll to the row total.
+            d4_tot += int(mods[0])    # Once done with rolls for this die, add d4_mod to total.
+            row_tots += [d4_tot]    # Add the total for the row into the list of all row totals.
         elif x == 1:
-            # D6 
+            # D6
             rolls_d6 = []
             d6_tot = 0
             for z in range(0, int(num_rolls[x])):
-                # Same as if case, but for d6. 
-                curr_roll = random.randint(1,6)
+                # Same as if case, but for d6.
+                curr_roll = random.randint(1, 6)
                 rolls_d6 += [curr_roll]
                 d6_tot += curr_roll
             d6_tot += int(mods[1])
             row_tots += [d6_tot]
         elif x == 2:
-            # D8 
+            # D8
             rolls_d8 = []
             d8_tot = 0
             for c in range(0, int(num_rolls[x])):
-                # Same as if case, but for d8. 
-                curr_roll = random.randint(1,8)
+                # Same as if case, but for d8.
+                curr_roll = random.randint(1, 8)
                 rolls_d8 += [curr_roll]
                 d8_tot += curr_roll
             d8_tot += int(mods[2])
             row_tots += [d8_tot]
         elif x == 3:
-            # D10 
+            # D10
             rolls_d10 = []
             d10_tot = 0
             for n in range(0, int(num_rolls[x])):
-                # Same as if case, but for d10. 
-                curr_roll = random.randint(1,10)
+                # Same as if case, but for d10.
+                curr_roll = random.randint(1, 10)
                 rolls_d10 += [curr_roll]
                 d10_tot += curr_roll
             d10_tot += int(mods[3])
             row_tots += [d10_tot]
         elif x == 4:
-            # D20 
+            # D20
             rolls_d20 = []
             d20_tot = 0
             for m in range(0, int(num_rolls[x])):
-                # Same as if case, but for d20. 
-                curr_roll = random.randint(1,20)
+                # Same as if case, but for d20.
+                curr_roll = random.randint(1, 20)
                 rolls_d20 += [curr_roll]
                 d20_tot += curr_roll
             d20_tot += int(mods[4])
@@ -412,16 +439,16 @@ def roll_all():
             dx_tot = 0
             to_roll = request.form.get('DX')
             for p in range(0, int(num_rolls[x])):
-                # Same as if case, but for dx. 
+                # Same as if case, but for dx.
                 curr_roll = random.randint(1, int(to_roll))
                 rolls_dx += [curr_roll]
                 dx_tot += curr_roll
             dx_tot += int(mods[5])
             row_tots += [dx_tot]
 
-    # Cumulative Total 
+    # Cumulative Total
     for k in range(0, len(row_tots)):
-        # Loop through the list of row totals, adding them all to the cumulative total. 
+        # Loop through the list of row totals, adding them all to the cumulative total.
         result += row_tots[k]
 
     # Add a '+' to all positive modifiers, just for aesthetic purposes.
@@ -465,8 +492,10 @@ def roll_all():
     if int(num_rolls[5]) > 0:
         rolls_dx += [str(num_rolls[5]) + 'xD' + str(to_roll)]
 
+    roll_test()
     return render_template('./mult_dice.html', **locals())
 
+# Updates the char_inv value in the database so the user can comstantly update while playing
 @app.route("/update_inv/", methods=['POST'])
 def update_inv():
     curr_inv = request.form['char_inv']
@@ -476,6 +505,7 @@ def update_inv():
     entry = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
     return render_template('view_char.html', **locals())
 
+# Updates the char_notes value in the database so the user can constantly update them while playing
 @app.route("/update_notes/", methods=['POST'])
 def update_notes():
     curr_notes = request.form['char_notes']
@@ -485,10 +515,11 @@ def update_notes():
     entry = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
     return render_template('view_char.html', **locals())
 
+# Rolls a d20 to determine a hit, with a 1 meaning a miss and a 20 a crit, and rolls whatever damage dice are specified by character sheet
 @app.route("/roll_attack/", methods=['POST'])
 def roll_attack():
     weapon = str(request.form['weapon'])
-    attack_roll = random.randint(1,20)
+    attack_roll = random.randint(1, 20)
     if attack_roll == 1:
         if weapon == 'Primary':
             prim_result = 'Miss'
@@ -496,12 +527,12 @@ def roll_attack():
             sec_result = 'Miss'
         db = get_db()
         entry = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
-        return render_template('view_char.html', **locals())       
+        return render_template('view_char.html', **locals())
     num = int(request.form['char_weap_num'])
     die = int(request.form['char_weap_die'])
     total = 0
     for i in range(0, num):
-        curr = random.randint(1,die)
+        curr = random.randint(1, die)
         total += curr
     if attack_roll == 20:
         result = 'Crit! You deal ' + str(total * 2) + ' damage!'
@@ -519,7 +550,7 @@ def roll_attack():
 @app.route("/roll_att/", methods=['POST'])
 def roll_att():
     att = request.form['att_val']
-    att_roll = random.randint(1,20)
+    att_roll = random.randint(1, 20)
     init_att_roll = att_roll
     if int(att) == 1:
         att_roll -= 5
@@ -599,10 +630,9 @@ def roll_att():
     entry = cur.fetchall()
     return render_template('view_char.html', **locals())
 
-# Function that checks various things about the character sheet to make sure the user isn't cheating with updating their stats. 
-# Runs on both creating and updating a character and returns a string to be flashed on the screen about what you did wrong.
+
+# Function that checks various things about the character sheet to make sure the user isn't cheating with updating their stats.
 def char_checker(form):
-    # Loop through the form
     secondary_weap_check = []
     for i in form:
         # Adds the secondary weapon info to be checked separately
@@ -650,7 +680,7 @@ def char_checker(form):
             pass
         else:
             return 'You must fill out all 3 fields for the secondary weapon if you want to add one.'
-    
+
     # Check if the proficiency bonus is correct for your level
     level = int(form['char_lvl'])
     proficiency = int(form['char_proficiency'])
@@ -677,13 +707,13 @@ def char_checker(form):
             return 'Your proficiency is too low for a level ' + str(level) + '. It should be at 6.'
 
     # Checks to make sure the user hasn't changed any of their attributes to be greater than 20
-    attributes = { 
+    attributes = {
             'Strength': int(form['char_str']),
             'Dexterity': int(form['char_dex']),
             'Constitution': int(form['char_const']),
             'Intelligence': int(form['char_intel']),
             'Wisdom': int(form['char_wisdom']),
-            'Charisma': int(form['char_charisma']) }
+            'Charisma': int(form['char_charisma'])}
     for key in attributes:
         if attributes[key] > 20:
             return 'You cannot increase ' + key + ' over level 20.'
@@ -694,10 +724,10 @@ def char_checker(form):
     if current_hp > max_hp:
         return 'Current health cannot be higher than max health.'
     if current_hp == 0:
-        flash('Your character is either unconcious or, if the rest of the damage to take is more than your max health, dead.')
+        return 'Your character is either unconcious or, if the rest of the damage to take is more than your max health, dead.'
 
-    return ''    
+    return ''
 
 # Runs the server in debug mode when file is run with "python3 main.py"
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5000,debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

@@ -32,6 +32,7 @@
                 <ol class="char_list">
                     {% for game in games %}
                     <h2>{{ game.game_name }}</h2>
+                    <p>{{ game.game_notes }}</p>
                     <h3>Players in Game</h3>
                     {% endfor %}
                     {% for player in players %}

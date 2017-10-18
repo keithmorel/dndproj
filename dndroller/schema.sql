@@ -44,7 +44,8 @@ drop table if exists games;
 create table games (
     id integer primary key autoincrement,
     dm_name text not null,
-    game_name text not null
+    game_name text not null,
+    game_notes blob
 );
 
 drop table if exists npcs;
