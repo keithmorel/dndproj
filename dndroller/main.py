@@ -98,7 +98,7 @@ def register():
         if user != []:
             flash('User already exists. Try logging in with info instead')
             return redirect(url_for('login'))
-        # If not, insert into database, login, and redirect to character list page
+        # If not, insert into database and login
         db.execute('insert into user_list (username, password, is_dm) values (?, ?, ?)', [request.form['username'], request.form['password'], request.form['is_dm']])
         db.commit()
         flash('Successfully registered')
@@ -220,16 +220,14 @@ def create_game():
     db.commit()
     return redirect(url_for('game_list'))
 
-# Deletes just the game currently *** REMOVE ALL CHARACTERS, NPCS, AND MONSTERS AS WELL ***
+# Deletes just the game currently *** REMOVE ALL MONSTERS AS WELL ***
 @app.route('/delete_game/', methods=['POST'])
 def delete_game():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    cur = db.execute('select * from char_sheets where dm = ? and game = ?', [request.form['dm_name'], request.form['game_name']])
-    characters = cur.fetchall()
-    for char in characters:
-        print(char)
+    db.execute('update char_sheets set dm = ?, game = ? where dm = ? and game = ?', [None, None, request.form['dm_name'], request.form['game_name']])
+    db.execute('delete from npcs where dm = ?', [request.form['dm_name']])
     db.execute('delete from games where dm_name = ? and game_name = ?', [request.form['dm_name'], request.form['game_name']])
     db.commit()
     return redirect(url_for('game_list'))
