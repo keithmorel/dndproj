@@ -118,6 +118,9 @@ def logout():
 # Route for the page that displays all of the current characters in the database
 @app.route('/char_list')
 def char_list():
+    if not session.get('logged_in'):
+        flash('You must be logged in to view your characters')
+        return redirect(request.referrer)
     db = get_db()
     cur = db.execute('select * from char_sheets where author = ?', [session['username']])
     entries = cur.fetchall()
@@ -194,7 +197,8 @@ def view_char():
 @app.route('/game_list')
 def game_list():
     if not session.get('logged_in'):
-        abort(401)
+        flash('You must be logged in to view your game')
+        return redirect(request.referrer)
     db = get_db()
     is_dm = db.execute('select is_dm from user_list where username = ?', [session['username']])
     if is_dm.fetchone()[0] == 'False':
