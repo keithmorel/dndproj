@@ -328,12 +328,12 @@ def roll_all():
     x = str(request.form['DX'])
     # Each dictionary item has an array with the following info, [number of rolls, modifier, list of rolls, modifier as a string, row total], for each die
     dice_to_roll = {
-            '4':[request.form['d4_rolls'], request.form['d4_mod'], [], '', 0],
-            '6':[request.form['d6_rolls'], request.form['d6_mod'], [], '', 0],
-            '8':[request.form['d8_rolls'], request.form['d8_mod'], [], '', 0],
-            '10':[request.form['d10_rolls'], request.form['d10_mod'], [], '', 0],
-            '20':[request.form['d20_rolls'], request.form['d20_mod'], [], '', 0],
-            x:[request.form['dx_rolls'], request.form['dx_mod'], [], '', 0]
+            '4': [request.form['d4_rolls'], request.form['d4_mod'], [], '', 0],
+            '6': [request.form['d6_rolls'], request.form['d6_mod'], [], '', 0],
+            '8': [request.form['d8_rolls'], request.form['d8_mod'], [], '', 0],
+            '10': [request.form['d10_rolls'], request.form['d10_mod'], [], '', 0],
+            '20': [request.form['d20_rolls'], request.form['d20_mod'], [], '', 0],
+            x: [request.form['dx_rolls'], request.form['dx_mod'], [], '', 0]
     }
     result = 0
     for key in dice_to_roll:
