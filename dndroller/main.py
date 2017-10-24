@@ -318,182 +318,66 @@ def all_dice():
     result = 0    # Final result that appears at the bottom right of the table
     return render_template('./mult_dice.html', **locals())
 
-def roll_test():
-    dice_to_roll = {
-            '4':[request.form['d4_rolls'], request.form['d4_mod']],
-            '6':[request.form['d6_rolls'], request.form['d6_mod']],
-            '8':[request.form['d8_rolls'], request.form['d8_mod']],
-            '10':[request.form['d10_rolls'], request.form['d10_mod']],
-            '20':[request.form['d20_rolls'], request.form['d20_mod']],
-            str(request.form['DX']):[request.form['dx_rolls'], request.form['dx_mod']]
-    }
-    result = 0
-    rolls = []
-    for i in dice_to_roll:
-        print(dice_to_roll[i])
-        print(int(i))
-        print(int(dice_to_roll[i][0]))
-        if dice_to_roll[i][0] == '':
-            dice_to_roll[i][0] = 0
-        elif dice_to_roll[i][1] == '':
-            dice_to_roll[i][1] = 0
-        elif int(dice_to_roll[i][0]) > 0:
-            for j in range(0, int(dice_to_roll[i][0])):
-                roll = random.randint(1, int(i)) + int(dice_to_roll[i][1])
-                result += roll
-                rolls += [roll]
-    print('Result: ' + str(result) + ' = ' + str(rolls))
-    return
-
-# Main method that does the most amount of work on the site. Takes in all of the inputs and modifiers from all of the different dice available and calculates the total amount rolled for each row and total.
+# Main rolling function that takes in all the info filled out on the rolling page and rolls the dice and sets all the variables
 @app.route("/roll_all/", methods=['POST'])
 def roll_all():
-    # Initializing a list to store the number of times to roll each individual die, using a GET request to pull this information from the inputs.
-    num_rolls = []
-    num_rolls += [request.form.get('d4_rolls')]
-    num_rolls += [request.form.get('d6_rolls')]
-    num_rolls += [request.form.get('d8_rolls')]
-    num_rolls += [request.form.get('d10_rolls')]
-    num_rolls += [request.form.get('d20_rolls')]
-    num_rolls += [request.form.get('dx_rolls')]
-    # Initializing a list to store the modifiers that are added or subtracted to the totals of each row using a GET request, not to each individual roll.
-    mods = []
-    mods += [request.form.get('d4_mod')]
-    mods += [request.form.get('d6_mod')]
-    mods += [request.form.get('d8_mod')]
-    mods += [request.form.get('d10_mod')]
-    mods += [request.form.get('d20_mod')]
-    mods += [request.form.get('dx_mod')]
-    for i in range(0, 6):
-        # Error checking of number of rolls:
-        # If any of the rolls weren't filled out, don't roll them. This avoids TypeErrors with trying to add empty strings to integers.
-        if num_rolls[i] == '':
-            num_rolls[i] = 0
-    for j in range(0, 6):
-        # Error checking of modifiers:
-        # If any modifiers weren't filled out, don't add anything. This avoids TypeErrors with trying to add empty strings to integers.
-        if mods[j] == '':
-            mods[j] = 0
-    result = 0    # Initialize final result as 0, just in case nothing is filled out.
-    row_tots = []   # Initialize list to hold the row totals, which will be added together at the end to the final result.
-    for x in range(0, 6):
-        # Since the dice chosen on this page are fixed and not in order, this is needed to be able to loop through the list of the number of rolls of each die and the modifiers for each die. e.g. [d4_rolls, d6_rolls, d8_rolls, d10_rolls, d20_rolls, dx_rolls], and [d4_mod, d6_mod, d8_mod, d10_mod, d20_mod, dx_mod]
-        if x == 0:
-            # D4
-            rolls_d4 = []
-            d4_tot = 0
-            for y in range(0, int(num_rolls[x])):
-                # Loop through rolling the die the amount of times specified by d4_rolls.
-                curr_roll = random.randint(1, 4)    # Save current roll to variable so the number is the same when called multiple times.
-                rolls_d4 += [curr_roll]    # Add current roll to the list of rolls for this die.
-                d4_tot += curr_roll    # Add current roll to the row total.
-            d4_tot += int(mods[0])    # Once done with rolls for this die, add d4_mod to total.
-            row_tots += [d4_tot]    # Add the total for the row into the list of all row totals.
-        elif x == 1:
-            # D6
-            rolls_d6 = []
-            d6_tot = 0
-            for z in range(0, int(num_rolls[x])):
-                # Same as if case, but for d6.
-                curr_roll = random.randint(1, 6)
-                rolls_d6 += [curr_roll]
-                d6_tot += curr_roll
-            d6_tot += int(mods[1])
-            row_tots += [d6_tot]
-        elif x == 2:
-            # D8
-            rolls_d8 = []
-            d8_tot = 0
-            for c in range(0, int(num_rolls[x])):
-                # Same as if case, but for d8.
-                curr_roll = random.randint(1, 8)
-                rolls_d8 += [curr_roll]
-                d8_tot += curr_roll
-            d8_tot += int(mods[2])
-            row_tots += [d8_tot]
-        elif x == 3:
-            # D10
-            rolls_d10 = []
-            d10_tot = 0
-            for n in range(0, int(num_rolls[x])):
-                # Same as if case, but for d10.
-                curr_roll = random.randint(1, 10)
-                rolls_d10 += [curr_roll]
-                d10_tot += curr_roll
-            d10_tot += int(mods[3])
-            row_tots += [d10_tot]
-        elif x == 4:
-            # D20
-            rolls_d20 = []
-            d20_tot = 0
-            for m in range(0, int(num_rolls[x])):
-                # Same as if case, but for d20.
-                curr_roll = random.randint(1, 20)
-                rolls_d20 += [curr_roll]
-                d20_tot += curr_roll
-            d20_tot += int(mods[4])
-            row_tots += [d20_tot]
-        else:
-            # DX
-            rolls_dx = []
-            dx_tot = 0
-            to_roll = request.form.get('DX')
-            for p in range(0, int(num_rolls[x])):
-                # Same as if case, but for dx.
-                curr_roll = random.randint(1, int(to_roll))
-                rolls_dx += [curr_roll]
-                dx_tot += curr_roll
-            dx_tot += int(mods[5])
-            row_tots += [dx_tot]
-
-    # Cumulative Total
-    for k in range(0, len(row_tots)):
-        # Loop through the list of row totals, adding them all to the cumulative total.
-        result += row_tots[k]
-
-    # Add a '+' to all positive modifiers, just for aesthetic purposes.
-    if int(mods[0]) > 0:
-        mod_d4 = '+' + str(mods[0])
-    else:
-        mod_d4 = str(mods[0])
-    if int(mods[1]) > 0:
-        mod_d6 = '+' + str(mods[1])
-    else:
-        mod_d6 = str(mods[1])
-    if int(mods[2]) > 0:
-        mod_d8 = '+' + str(mods[2])
-    else:
-        mod_d8 = str(mods[2])
-    if int(mods[3]) > 0:
-        mod_d10 = '+' + str(mods[3])
-    else:
-        mod_d10 = str(mods[3])
-    if int(mods[4]) > 0:
-        mod_d20 = '+' + str(mods[4])
-    else:
-        mod_d20 = str(mods[4])
-    if int(mods[5]) > 0:
-        mod_dx = '+' + str(mods[5])
-    else:
-        mod_dx = str(mods[5])
-
-    # Add the last action done to the end of the list of rolls you had, For aesthetic purposes only
-    # E.g. If you rolled 5 d6's, '5xd6' would be added to the list
-    if int(num_rolls[0]) > 0:
-        rolls_d4 += [str(num_rolls[0]) + 'xD4']
-    if int(num_rolls[1]) > 0:
-        rolls_d6 += [str(num_rolls[1]) + 'xD6']
-    if int(num_rolls[2]) > 0:
-        rolls_d8 += [str(num_rolls[2]) + 'xD8']
-    if int(num_rolls[3]) > 0:
-        rolls_d10 += [str(num_rolls[3]) + 'xD10']
-    if int(num_rolls[4]) > 0:
-        rolls_d20 += [str(num_rolls[4]) + 'xD20']
-    if int(num_rolls[5]) > 0:
-        rolls_dx += [str(num_rolls[5]) + 'xD' + str(to_roll)]
-
-    roll_test()
-    return render_template('./mult_dice.html', **locals())
+    x = str(request.form['DX'])
+    # Each dictionary item has an array with the following info, [number of rolls, modifier, list of rolls, modifier as a string, row total], for each die
+    dice_to_roll = {
+            '4':[request.form['d4_rolls'], request.form['d4_mod'], [], '', 0],
+            '6':[request.form['d6_rolls'], request.form['d6_mod'], [], '', 0],
+            '8':[request.form['d8_rolls'], request.form['d8_mod'], [], '', 0],
+            '10':[request.form['d10_rolls'], request.form['d10_mod'], [], '', 0],
+            '20':[request.form['d20_rolls'], request.form['d20_mod'], [], '', 0],
+            x:[request.form['dx_rolls'], request.form['dx_mod'], [], '', 0]
+    }
+    result = 0
+    for key in dice_to_roll:
+        # Error checking of rolls and mods
+        if dice_to_roll[key][0] == '':
+            dice_to_roll[key][0] = 0
+        elif dice_to_roll[key][1] == '':
+            dice_to_roll[key][1] = 0
+        # If you have to roll this die
+        elif int(dice_to_roll[key][0]) > 0:
+            # Loop through as many times as indicated by the user
+            for j in range(0, int(dice_to_roll[key][0])):
+                # Roll a die with the number indicated by the current key
+                roll = random.randint(1, int(key))
+                # Add the roll to the final result
+                result += roll
+                # Add the roll to the list of rolls for the die
+                dice_to_roll[key][2] += [roll]
+                # Add the roll to the row total
+                dice_to_roll[key][4] += roll
+            # Format the mod: if > 0, add a + sign, else just make it a string
+            mod = int(dice_to_roll[key][1])
+            if mod > 0:
+                dice_to_roll[key][3] = '+' + str(mod)
+            else:
+                dice_to_roll[key][3] = str(mod)
+            # Add the mod to the row total
+            dice_to_roll[key][4] += mod
+    # Instantiate all the variables needed to output onto the HTML
+    rolls_d4 = dice_to_roll['4'][2] + [str(dice_to_roll['4'][0]) + 'xD4']
+    rolls_d6 = dice_to_roll['6'][2] + [str(dice_to_roll['6'][0]) + 'xD6']
+    rolls_d8 = dice_to_roll['8'][2] + [str(dice_to_roll['8'][0]) + 'xD8']
+    rolls_d10 = dice_to_roll['10'][2] + [str(dice_to_roll['10'][0]) + 'xD10']
+    rolls_d20 = dice_to_roll['20'][2] + [str(dice_to_roll['20'][0]) + 'xD20']
+    rolls_dx = dice_to_roll[x][2] + [str(dice_to_roll[x][0]) + 'xD' + x]
+    mod_d4 = dice_to_roll['4'][3]
+    mod_d6 = dice_to_roll['6'][3]
+    mod_d8 = dice_to_roll['8'][3]
+    mod_d10 = dice_to_roll['10'][3]
+    mod_d20 = dice_to_roll['20'][3]
+    mod_dx = dice_to_roll[x][3]
+    d4_tot = dice_to_roll['4'][4]
+    d6_tot = dice_to_roll['6'][4]
+    d8_tot = dice_to_roll['8'][4]
+    d10_tot = dice_to_roll['10'][4]
+    d20_tot = dice_to_roll['20'][4]
+    dx_tot = dice_to_roll[x][4]
+    return render_template('mult_dice.html', **locals())
 
 # Updates the char_inv value in the database so the user can comstantly update while playing
 @app.route("/update_inv/", methods=['POST'])
