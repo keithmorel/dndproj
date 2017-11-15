@@ -26,119 +26,244 @@
             </nav>
             <div class="content">
                 {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        <div class="flash">
-                            {% for message in messages %}
-                                <li>{{ message }}</li>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                {% endwith %}
-                {% if session.logged_in %}
-                    <form action="{{ url_for('submit_char') }}" method="POST">
-                        <input type="hidden" name="author" value="{{ session['username'] }}">
-                        Character Name: <input type="text" size="20" name="char_name" value="Name">
-                        Race: <select name="char_race" id="char_race">
-                            <option value="Dwarf">Dwarf</option>
-                            <option value="">----</option>
-                            <option value="Hill Dwarf">Hill Dwarf</option>
-                            <option value="Mountain Dwarf">Mountain Dwarf</option>
-                            <option value="">----</option>
-                            <option value="Elf">Elf</option>
-                            <option value="">----</option>
-                            <option value="High Elf">High Elf</option>
-                            <option value="Wood Elf">Wood Elf</option>
-                            <option value="DarkElf">Dark Elf</option>
-                            <option value="">----</option>
-                            <option value="Halfling">Halfling</option>
-                            <option value="">----</option>
-                            <option value="Lightfoot">Lightfoot</option>
-                            <option value="Stout">Stout</option>
-                            <option value="">----</option>
-                            <option value="Human">Human</option>
-                            <option value="">----</option>
-                            <option value="Calishite">Calishite</option>
-                            <option value="Chondathan">Chondathan</option>
-                            <option value="Damaran">Damaran</option>
-                            <option value="Illuskan">Illuskan</option>
-                            <option value="Mulan">Mulan</option>
-                            <option value="Rashemi">Rashemi</option>
-                            <option value="Shou">Shou</option>
-                            <option value="Tethyrian">Tethyrian</option>
-                            <option value="Turami">Turami</option>
-                            <option value="">----</option>
-                            <option value="Dragonborn">Dragonborn</option>
-                            <option value="">----</option>
-                            <option value="Aurak">Aurak</option>
-                            <option value="Baaz">Baaz</option>
-                            <option value="Bozak">Bozak</option>
-                            <option value="Kapak">Kapak</option>
-                            <option value="Sivak">Sivak</option>
-                            <option value="">----</option>
-                            <option value="Gnome">Gnome</option>
-                            <option value="">----</option>
-                            <option value="Forest Gnome">Forest Gnome</option>
-                            <option value="Rock Gnome">Rock Gnome</option>
-                            <option value="">----</option>
-                            <option value="Half-Elf">Half-Elf</option>
-                            <option value="Half-Orc">Half-Orc</option>
-                            <option value="Tiefling">Tiefling</option>
-                        </select>
-                        <script>
-                            document.getElementById("char_race").value = "Human";
-                        </script>
-                        Class: <select name="char_class" id="char_class">
-                            <option value="Barbarian">Barbarian</option>
-                            <option value="Bard">Bard</option>
-                            <option value="Cleric">Cleric</option>
-                            <option value="Druid">Druid</option>
-                            <option value="Fighter">Fighter</option>
-                            <option value="Monk">Monk</option>
-                            <option value="Paladin">Paladin</option>
-                            <option value="Ranger">Ranger</option>
-                            <option value="Rogue">Rogue</option>
-                            <option value="Sorcerer">Sorcerer</option>
-                            <option value="Warlock">Warlock</option>
-                            <option value="Wizard">Wizard</option>
-                        </select>
-                        <script>
-                            document.getElementById("char_class").value = "Fighter";
-                        </script>
-                        Level: <input type="number" min="1" max="20" value="1" name="char_lvl">
-                        Speed: <input type="number" min="5" step="5" value="25" name="char_speed">
-                        Proficiency <input type="number" min="2" max="6" value="2" name="char_proficiency"><br> 
-                        Alignment: <input type="radio" name="alignment" value="Lawful Good">Lawful Good
-                        <input type="radio" name="alignment" id="Neutral Good" value="Neutral Good">Neutral Good
-                        <input type="radio" name="alignment" id="Chaotic Good" value="Chaotic Good">Chaotic Good
-                        <input type="radio" name="alignment" id="Lawful Neutral" value="Lawful Neutral">Lawful Neutral
-                        <input type="radio" name="alignment" id="Neutral" value="Neutral">Neutral
-                        <input type="radio" name="alignment" id="Chaotic Neutral" value="Chaotic Neutral">Chaotic Neutral
-                        <input type="radio" name="alignment" id="Lawful Evil" value="Lawful Evil">Lawful Evil
-                        <input type="radio" name="alignment" id="Neutral Evil" value="Neutral Evil">Neutral Evil
-                        <input type="radio" name="alignment" id="Chaotic Evil" value="Chaotic Evil">Chaotic Evil 
-                        <a href="{{ url_for('alignment_details') }}" target="_blank">More Details on Alignments</a><br>
-                        <script>
-                            document.getElementById("Neutral").checked = true;
-                        </script>
-                        Health: <input name="curr_health" type="number" min="0" value="50"> / <input name="max_health" type="number" value="50">
-                        Armor: <input name="char_armor" type="number" min="0" value="0"></input><br>
-                        Strength: <input name="char_str" type="number" value="11" min="1" max="30"></input>
-                        Dexterity: <input name="char_dex" type="number" value="11" min="1" max="30"></input>
-                        Constitution: <input name="char_const" type="number" value="11" min="1" max="30"></input>
-                        Intelligence: <input name="char_intel" type="number" value="11" min="1" max="30"></input>
-                        Wisdom: <input name="char_wisdom"type="number" value="11" min="1" max="30"></input>
-                        Charisma: <input name="char_charisma"type="number" value="11" min="1" max="30"></input>
-                        Perception: <input name="char_perception" type="number" value="11" min="1" max="30"></input><br>
-                        Primary Weapon: <input type="text" name="char_weap_prim" value="Sword"> Hit Dice: <input type="number" min="1" max="10" value="1" name="char_weap_prim_num">d<input type="number" min="4" max="20" value="4" name="char_weap_prim_die">
-                        Secondary Weapon (optional): <input type="text" name="char_weap_sec"> Hit Dice: <input type="number" min="1" max="10" name="char_weap_sec_num">d<input type="number" min="4" max="20" name="char_weap_sec_die"><br>
-                        <textarea name="char_inv" rows="4" cols="30">Inventory</textarea>
-                        <textarea name="char_skills" rows="4" cols="30">Skills</textarea>
-                        <textarea name="char_notes" rows="4" cols="30">Notes</textarea>
-                        <input type="submit" value="Create">
-                    </form>
-                {% endif %}
+                {% if messages %}
+                <div class="flash">
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
                 </div>
-            <div class="footer"></div>
-        </div>
+                {% endif %}
+                {% endwith %}
+                <form action="{{ url_for('submit_char') }}" method="POST">
+                    <input type="hidden" name="author" value="{{ session['username'] }}">
+                    <div class="form-row">
+                        <div class="form-group col-md-5">
+                            <label>Character Name</label>
+                            <input type="text" class="form-control" name="char_name" placeholder="Name">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Race</label>
+                            <select class="form-control" name="char_race" id="char_race">
+                                <option value="Dwarf">Dwarf</option>
+                                <option value="">----</option>
+                                <option value="Hill Dwarf">Hill Dwarf</option>
+                                <option value="Mountain Dwarf">Mountain Dwarf</option>
+                                <option value="">----</option>
+                                <option value="Elf">Elf</option>
+                                <option value="">----</option>
+                                <option value="High Elf">High Elf</option>
+                                <option value="Wood Elf">Wood Elf</option>
+                                <option value="DarkElf">Dark Elf</option>
+                                <option value="">----</option>
+                                <option value="Halfling">Halfling</option>
+                                <option value="">----</option>
+                                <option value="Lightfoot">Lightfoot</option>
+                                <option value="Stout">Stout</option>
+                                <option value="">----</option>
+                                <option selected value="Human">Human</option>
+                                <option value="">----</option>
+                                <option value="Calishite">Calishite</option>
+                                <option value="Chondathan">Chondathan</option>
+                                <option value="Damaran">Damaran</option>
+                                <option value="Illuskan">Illuskan</option>
+                                <option value="Mulan">Mulan</option>
+                                <option value="Rashemi">Rashemi</option>
+                                <option value="Shou">Shou</option>
+                                <option value="Tethyrian">Tethyrian</option>
+                                <option value="Turami">Turami</option>
+                                <option value="">----</option>
+                                <option value="Dragonborn">Dragonborn</option>
+                                <option value="">----</option>
+                                <option value="Aurak">Aurak</option>
+                                <option value="Baaz">Baaz</option>
+                                <option value="Bozak">Bozak</option>
+                                <option value="Kapak">Kapak</option>
+                                <option value="Sivak">Sivak</option>
+                                <option value="">----</option>
+                                <option value="Gnome">Gnome</option>
+                                <option value="">----</option>
+                                <option value="Forest Gnome">Forest Gnome</option>
+                                <option value="Rock Gnome">Rock Gnome</option>
+                                <option value="">----</option>
+                                <option value="Half-Elf">Half-Elf</option>
+                                <option value="Half-Orc">Half-Orc</option>
+                                <option value="Tiefling">Tiefling</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Class</label>
+                            <select class="form-control" name="char_class" id="char_class">
+                                <option value="Barbarian">Barbarian</option>
+                                <option value="Bard">Bard</option>
+                                <option value="Cleric">Cleric</option>
+                                <option value="Druid">Druid</option>
+                                <option selected value="Fighter">Fighter</option>
+                                <option value="Monk">Monk</option>
+                                <option value="Paladin">Paladin</option>
+                                <option value="Ranger">Ranger</option>
+                                <option value="Rogue">Rogue</option>
+                                <option value="Sorcerer">Sorcerer</option>
+                                <option value="Warlock">Warlock</option>
+                                <option value="Wizard">Wizard</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Level</label>
+                            <input class="form-control" type="number" min="1" max="20" placeholder="1" name="char_lvl">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Speed</label>
+                            <input class="form-control" type="number" min="5" step="5" placeholder="5" name="char_speed">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Proficiency</label>
+                            <input class="form-control" type="number" min="2" max="6" placeholder="2" name="char_proficiency">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Alignment</label><br>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" name="alignment" id="Lawful Good" value="Lawful Good">Lawful Good
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" name="alignment" id="Neutral Good" value="Neutral Good">Neutral Good
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" name="alignment" id="Chaotic Good" value="Chaotic Good">Chaotic Good
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" name="alignment" id="Lawful Neutral" value="Lawful Neutral">Lawful Neutral
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" name="alignment" id="Neutral" value="Neutral" checked>Neutral
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" name="alignment" id="Chaotic Neutral" value="Chaotic Neutral">Chaotic Neutral
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" name="alignment" id="Lawful Evil" value="Lawful Evil">Lawful Evil
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" name="alignment" id="Neutral Evil" value="Neutral Evil">Neutral Evil
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" name="alignment" id="Chaotic Evil" value="Chaotic Evil">Chaotic Evil 
+                            </label>
+                        </div><br>
+                        <a href="{{ url_for('alignment_details') }}" target="_blank">More Details on Alignments</a><br>
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label>Current Health</label>
+                                <input class="form-control" name="curr_health" type="number" min="0" placeholder="50">                            
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Max Health</label>
+                                <input class="form-control" name="max_health" type="number" min="0" placeholder="50">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Armor</label>
+                                <input class="form-control" name="char_armor" type="number" min="0" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-2">
+                                <label>Strength</label>
+                                <input class="form-control" name="char_str" type="number" placeholder="11" min="1" max="30">
+                            </div>
+                            <div class="form-group col-sm-2">
+                                <label>Dexterity</label>
+                                <input class="form-control"  name="char_dex" type="number" placeholder="11" min="1" max="30">
+                            </div>
+                            <div class="form-group col-sm-2">
+                                <label>Constitution</label>
+                                <input class="form-control" name="char_const" type="number" placeholder="11" min="1" max="30">
+                            </div>
+                            <div class="form-group col-sm-2">
+                                <label>Intelligence</label>
+                                <input class="form-control" name="char_intel" type="number" placeholder="11" min="1" max="30">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-2">
+                                <label>Wisdom</label>
+                                <input class="form-control" name="char_wisdom"type="number" placeholder="11" min="1" max="30">
+                            </div>
+                            <div class="form-group col-sm-2">
+                                <label>Charisma</label>
+                                <input class="form-control" name="char_charisma"type="number" placeholder="11" min="1" max="30">
+                            </div>
+                            <div class="form-group col-sm-2">
+                                <label>Perception</label>
+                                <input class="form-control" name="char_perception" type="number" placeholder="11" min="1" max="30">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label>Primary Weapon</label>
+                                <input class="form-control" type="text" name="char_weap_prim" placeholder="Sword">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>What Die?</label>
+                                <input class="form-control" type="number" min="4" max="20" placeholder="4" name="char_weap_prim_die">
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label>How Many?</label>
+                                <input class="form-control" type="number" min="1" max="10" placeholder="1" name="char_weap_prim_num">
+                            </div>                            
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label>Secondary Weapon (Optional)</label>
+                                <input class="form-control" type="text" name="char_weap_sec" placeholder="Sword">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>What Die?</label>
+                                <input class="form-control" type="number" min="4" max="20" placeholder="4" name="char_weap_sec_die">
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label>How Many?</label>
+                                <input class="form-control" type="number" min="1" max="10" placeholder="1" name="char_weap_sec_num">
+                            </div>                            
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label>Inventory (Optional)</label>
+                                <textarea class="form-control" name="char_inv" rows="4" placeholder="Inventory"></textarea>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Skills (Optional)</label>
+                                <textarea class="form-control" name="char_skills" rows="4" placeholder="Skills"></textarea>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Notes (Optional)</label>
+                                <textarea class="form-control" name="char_notes" rows="4" placeholder="Notes"></textarea>
+                            </div>
+                        </div>
+                        <input class="btn btn-primary" type="submit" value="Create">
+                </form>
+                    </div>
+                    <div class="footer"></div>
+            </div>
     </body>
 </html>

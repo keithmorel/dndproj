@@ -60,9 +60,15 @@
                         {% if character.char_weap_sec != '' %}
                             Secondary Weapon: {{ character.char_weap_sec }} {{ character.char_weap_sec_num }}d{{ character.char_weap_sec_die }}<br>
                         {% endif %}
-                        Inventory: {{ character.char_inv }}<br>
-                        Notes: {{ character.char_notes }}<br>
-                        Skills: {{ character.char_skills }}<br>
+                        {% if character.char_inv != '' %}
+                            Inventory: {{ character.char_inv }}<br>
+                        {% endif %}
+                        {% if character.char_notes != '' %}
+                            Notes: {{ character.char_notes }}<br>
+                        {% endif %}
+                        {% if character.char_skills != '' %}
+                            Skills: {{ character.char_skills }}<br>
+                        {% endif %}
                         <form name="view_char" action="/view_char" method="POST">
                             <input type="hidden" name="to_view" value="{{ character.char_name }}">
                             <input type="hidden" name="user" value="{{ character.author }}">
