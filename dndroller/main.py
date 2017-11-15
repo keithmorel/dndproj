@@ -115,6 +115,14 @@ def logout():
     flash('Logged out')
     return redirect("/")
 
+# Route to display the character creation page
+@app.route('/create_char')
+def create_char():
+    if not session.get('logged_in'):
+        flash('You must be logged in to create a character')
+        return redirect(request.referrer)
+    return render_template('char_create.html', **locals())
+
 # Route for the page that displays all of the current characters in the database
 @app.route('/char_list')
 def char_list():
@@ -126,9 +134,9 @@ def char_list():
     entries = cur.fetchall()
     return render_template('char_list.html', **locals())
 
-# Route that adds all of the info from the form into the database
-@app.route('/create', methods=['POST'])
-def create():
+# Route that adds the new character to the database
+@app.route('/submit_char/', methods=['POST'])
+def submit_char():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
@@ -136,14 +144,15 @@ def create():
     # Check if character already exists
     if cur.fetchall() != []:
         flash('Character with that name already exists. Try another one')
-        return redirect('char_list')
+        return redirect('create_char')
     # If they don't exist, create them
     check = char_checker(request.form)
     if check != '':
         flash(check)
-        return redirect(url_for('char_list'))
+        return redirect(url_for('create_char'))
     db.execute('insert into char_sheets (author, char_name, char_race, char_class, char_lvl, char_speed, char_proficiency, alignment, curr_health, max_health, char_armor, char_str, char_dex, char_const, char_intel, char_wisdom, char_charisma, char_perception, char_weap_prim, char_weap_prim_num, char_weap_prim_die, char_weap_sec, char_weap_sec_num, char_weap_sec_die, char_inv, char_skills, char_notes) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [session['username'], request.form['char_name'], request.form['char_race'], request.form['char_class'], request.form['char_lvl'], request.form['char_speed'], request.form['char_proficiency'], request.form['alignment'], request.form['curr_health'], request.form['max_health'], request.form['char_armor'], request.form['char_str'], request.form['char_dex'], request.form['char_const'], request.form['char_intel'], request.form['char_wisdom'], request.form['char_charisma'], request.form['char_perception'], request.form['char_weap_prim'], request.form['char_weap_prim_num'], request.form['char_weap_prim_die'], request.form['char_weap_sec'], request.form['char_weap_sec_num'], request.form['char_weap_sec_die'], request.form['char_inv'], request.form['char_skills'], request.form['char_notes']])
     db.commit()
+    flash('Successfully Created ' + str(request.form['char_name']))
     return redirect(url_for('char_list'))
 
 # Route that deletes the character from the database, *** LOOK INTO MAKING A CONFIRM CHOICE POPUP BEFORE DELETING ***
@@ -154,7 +163,8 @@ def delete_char():
     db = get_db()
     db.execute('delete from char_sheets where char_name = ? and author = ?', [request.form['to_delete'], session['username']])
     db.commit()
-    return redirect(url_for('char_list'))
+    flash('Successfully Deleted ' + str(request.form['to_delete']))
+    return redirect('char_list')
 
 # Route to a page that brings up another character creation screen, but with all of the information filled out for the current character filled out for you
 @app.route('/update_char', methods=['POST'])
@@ -181,6 +191,7 @@ def update():
         return render_template('char_update.html', **locals())
     db.execute('update char_sheets set char_race = ?, char_class = ?, char_lvl = ?, char_speed = ?, char_proficiency = ?, alignment = ?, curr_health = ?, max_health = ?, char_armor = ?, char_str = ?, char_dex = ?, char_const = ?, char_intel = ?, char_wisdom = ?, char_charisma = ?, char_perception = ?, char_weap_prim = ?, char_weap_prim_num = ?, char_weap_prim_die = ?, char_weap_sec = ?, char_weap_sec_num = ?, char_weap_sec_die = ?, char_inv = ?, char_skills = ?, char_notes = ? where char_name = ? and author = ?', [request.form['char_race'], request.form['char_class'], request.form['char_lvl'], request.form['char_speed'], request.form['char_proficiency'], request.form['alignment'], request.form['curr_health'], request.form['max_health'], request.form['char_armor'], request.form['char_str'], request.form['char_dex'], request.form['char_const'], request.form['char_intel'], request.form['char_wisdom'], request.form['char_charisma'], request.form['char_perception'], request.form['char_weap_prim'], request.form['char_weap_prim_num'], request.form['char_weap_prim_die'], request.form['char_weap_sec'], request.form['char_weap_sec_num'], request.form['char_weap_sec_die'], request.form['char_inv'], request.form['char_skills'], request.form['char_notes'], request.form['char_name'], session['username']])
     db.commit()
+    flash('Successfully Updated ' + str(request.form['char_name']))
     return redirect(url_for('char_list'))
 
 # Route to the page that just displays all of the character info and allows certain actions to take place
@@ -399,6 +410,15 @@ def update_notes():
     curr_notes = request.form['char_notes']
     db = get_db()
     db.execute('update char_sheets set char_notes = ? where char_name = ? and author = ?', [curr_notes, request.form['char_name'], session['username']])
+    db.commit()
+    entry = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
+    return render_template('view_char.html', **locals())
+
+@app.route("/update_skills/", methods=['POST'])
+def update_skills():
+    curr_skills = request.form['char_skills']
+    db = get_db()
+    db.execute('update char_sheets set char_skills = ? where char_name = ? and author = ?', [curr_skills, request.form['char_name'], session['username']])
     db.commit()
     entry = db.execute('select * from char_sheets where char_name = ? and author = ?', [request.form['char_name'], session['username']])
     return render_template('view_char.html', **locals())

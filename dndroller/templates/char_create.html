@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>DnD Site</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <div>
+            <div class="header"></div>
+            <h2>Welcome to my DnD Site!</h2>
+            <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('all_dice') }}">Roll Dice</a></li>
+                    <li class="nav-item active"><a class="nav-link" href="{{ url_for('create_char') }}">Create Character</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('char_list') }}">My Character Sheets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('game_list') }}">My Game</a></li>
+                    {% if not session.logged_in %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link disabled">Logged in as: {{ session['username'] }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <div class="content">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="flash">
+                            {% for message in messages %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                {% if session.logged_in %}
+                    <form action="{{ url_for('submit_char') }}" method="POST">
+                        <input type="hidden" name="author" value="{{ session['username'] }}">
+                        Character Name: <input type="text" size="20" name="char_name" value="Name">
+                        Race: <select name="char_race" id="char_race">
+                            <option value="Dwarf">Dwarf</option>
+                            <option value="">----</option>
+                            <option value="Hill Dwarf">Hill Dwarf</option>
+                            <option value="Mountain Dwarf">Mountain Dwarf</option>
+                            <option value="">----</option>
+                            <option value="Elf">Elf</option>
+                            <option value="">----</option>
+                            <option value="High Elf">High Elf</option>
+                            <option value="Wood Elf">Wood Elf</option>
+                            <option value="DarkElf">Dark Elf</option>
+                            <option value="">----</option>
+                            <option value="Halfling">Halfling</option>
+                            <option value="">----</option>
+                            <option value="Lightfoot">Lightfoot</option>
+                            <option value="Stout">Stout</option>
+                            <option value="">----</option>
+                            <option value="Human">Human</option>
+                            <option value="">----</option>
+                            <option value="Calishite">Calishite</option>
+                            <option value="Chondathan">Chondathan</option>
+                            <option value="Damaran">Damaran</option>
+                            <option value="Illuskan">Illuskan</option>
+                            <option value="Mulan">Mulan</option>
+                            <option value="Rashemi">Rashemi</option>
+                            <option value="Shou">Shou</option>
+                            <option value="Tethyrian">Tethyrian</option>
+                            <option value="Turami">Turami</option>
+                            <option value="">----</option>
+                            <option value="Dragonborn">Dragonborn</option>
+                            <option value="">----</option>
+                            <option value="Aurak">Aurak</option>
+                            <option value="Baaz">Baaz</option>
+                            <option value="Bozak">Bozak</option>
+                            <option value="Kapak">Kapak</option>
+                            <option value="Sivak">Sivak</option>
+                            <option value="">----</option>
+                            <option value="Gnome">Gnome</option>
+                            <option value="">----</option>
+                            <option value="Forest Gnome">Forest Gnome</option>
+                            <option value="Rock Gnome">Rock Gnome</option>
+                            <option value="">----</option>
+                            <option value="Half-Elf">Half-Elf</option>
+                            <option value="Half-Orc">Half-Orc</option>
+                            <option value="Tiefling">Tiefling</option>
+                        </select>
+                        <script>
+                            document.getElementById("char_race").value = "Human";
+                        </script>
+                        Class: <select name="char_class" id="char_class">
+                            <option value="Barbarian">Barbarian</option>
+                            <option value="Bard">Bard</option>
+                            <option value="Cleric">Cleric</option>
+                            <option value="Druid">Druid</option>
+                            <option value="Fighter">Fighter</option>
+                            <option value="Monk">Monk</option>
+                            <option value="Paladin">Paladin</option>
+                            <option value="Ranger">Ranger</option>
+                            <option value="Rogue">Rogue</option>
+                            <option value="Sorcerer">Sorcerer</option>
+                            <option value="Warlock">Warlock</option>
+                            <option value="Wizard">Wizard</option>
+                        </select>
+                        <script>
+                            document.getElementById("char_class").value = "Fighter";
+                        </script>
+                        Level: <input type="number" min="1" max="20" value="1" name="char_lvl">
+                        Speed: <input type="number" min="5" step="5" value="25" name="char_speed">
+                        Proficiency <input type="number" min="2" max="6" value="2" name="char_proficiency"><br> 
+                        Alignment: <input type="radio" name="alignment" value="Lawful Good">Lawful Good
+                        <input type="radio" name="alignment" id="Neutral Good" value="Neutral Good">Neutral Good
+                        <input type="radio" name="alignment" id="Chaotic Good" value="Chaotic Good">Chaotic Good
+                        <input type="radio" name="alignment" id="Lawful Neutral" value="Lawful Neutral">Lawful Neutral
+                        <input type="radio" name="alignment" id="Neutral" value="Neutral">Neutral
+                        <input type="radio" name="alignment" id="Chaotic Neutral" value="Chaotic Neutral">Chaotic Neutral
+                        <input type="radio" name="alignment" id="Lawful Evil" value="Lawful Evil">Lawful Evil
+                        <input type="radio" name="alignment" id="Neutral Evil" value="Neutral Evil">Neutral Evil
+                        <input type="radio" name="alignment" id="Chaotic Evil" value="Chaotic Evil">Chaotic Evil 
+                        <a href="{{ url_for('alignment_details') }}" target="_blank">More Details on Alignments</a><br>
+                        <script>
+                            document.getElementById("Neutral").checked = true;
+                        </script>
+                        Health: <input name="curr_health" type="number" min="0" value="50"> / <input name="max_health" type="number" value="50">
+                        Armor: <input name="char_armor" type="number" min="0" value="0"></input><br>
+                        Strength: <input name="char_str" type="number" value="11" min="1" max="30"></input>
+                        Dexterity: <input name="char_dex" type="number" value="11" min="1" max="30"></input>
+                        Constitution: <input name="char_const" type="number" value="11" min="1" max="30"></input>
+                        Intelligence: <input name="char_intel" type="number" value="11" min="1" max="30"></input>
+                        Wisdom: <input name="char_wisdom"type="number" value="11" min="1" max="30"></input>
+                        Charisma: <input name="char_charisma"type="number" value="11" min="1" max="30"></input>
+                        Perception: <input name="char_perception" type="number" value="11" min="1" max="30"></input><br>
+                        Primary Weapon: <input type="text" name="char_weap_prim" value="Sword"> Hit Dice: <input type="number" min="1" max="10" value="1" name="char_weap_prim_num">d<input type="number" min="4" max="20" value="4" name="char_weap_prim_die">
+                        Secondary Weapon (optional): <input type="text" name="char_weap_sec"> Hit Dice: <input type="number" min="1" max="10" name="char_weap_sec_num">d<input type="number" min="4" max="20" name="char_weap_sec_die"><br>
+                        <textarea name="char_inv" rows="4" cols="30">Inventory</textarea>
+                        <textarea name="char_skills" rows="4" cols="30">Skills</textarea>
+                        <textarea name="char_notes" rows="4" cols="30">Notes</textarea>
+                        <input type="submit" value="Create">
+                    </form>
+                {% endif %}
+                </div>
+            <div class="footer"></div>
+        </div>
+    </body>
+</html>
