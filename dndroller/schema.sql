@@ -55,5 +55,3 @@ create table npcs (
     info blob,
     dm text not null
 );
-
-

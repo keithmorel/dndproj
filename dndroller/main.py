@@ -96,12 +96,12 @@ def register():
         user = cur.fetchall()
         # Checking if user already exists
         if user != []:
-            flash('User already exists. Try logging in with info instead')
+            flash('User already exists')
             return redirect(url_for('login'))
         # If not, insert into database and login
         db.execute('insert into user_list (username, password, is_dm) values (?, ?, ?)', [request.form['username'], request.form['password'], request.form['is_dm']])
         db.commit()
-        flash('Successfully registered')
+        flash('Successfully registered ' + request.form['username'])
         session['logged_in'] = True
         session['username'] = request.form['username']
         return redirect(url_for('index'))
@@ -217,22 +217,45 @@ def game_list():
         return redirect(request.referrer)
     cur = db.execute('select * from games where dm_name = ?', [session['username']])
     games = cur.fetchall()
+    if games == []:
+        no_games = True
+    else:
+        no_games = False
     cur = db.execute('select * from char_sheets where dm = ?', [session['username']])
     players = cur.fetchall()
+    if players == []:
+        no_players = True
+    else:
+        no_players = False
     return render_template('dm_game.html', **locals())
 
 # Allows you to create a game with whatevre name you like
-@app.route('/create_game', methods=['POST'])
-def create_game():
+@app.route('/submit_game', methods=['POST'])
+def submit_game():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
+    if request.form['game_name'] == '':
+        flash('You must give your game a name')
+        return redirect('game_list')
     check = db.execute('select * from games where dm_name = ?', [session['username']])
     if check.fetchall() != []:
         flash('You are already hosting a game with this account.')
         return redirect(url_for('game_list'))
     db.execute('insert into games (dm_name, game_name, game_notes) values (?, ?, ?)', [session['username'], request.form['game_name'], request.form['game_notes']])
     db.commit()
+    flash('Successfully created ' + request.form['game_name'])
+    return redirect(url_for('game_list'))
+
+# Updates the notes of the user's game
+@app.route('/update_game/', methods=['POST'])
+def update_game():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    db.execute('update games set game_notes = ? where dm_name = ? and game_name = ?', [request.form['game_notes'], session['username'], request.form['game_name']])
+    db.commit()
+    flash('Successfully Updated ' + request.form['game_name'])
     return redirect(url_for('game_list'))
 
 # Deletes just the game currently *** REMOVE ALL MONSTERS AS WELL ***
@@ -241,23 +264,12 @@ def delete_game():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    db.execute('update char_sheets set dm = ?, game = ? where dm = ? and game = ?', [None, None, request.form['dm_name'], request.form['game_name']])
-    db.execute('delete from npcs where dm = ?', [request.form['dm_name']])
-    db.execute('delete from games where dm_name = ? and game_name = ?', [request.form['dm_name'], request.form['game_name']])
+    db.execute('update char_sheets set dm = ?, game = ? where dm = ? and game = ?', [None, None, session['username'], request.form['game_name']])
+    db.execute('delete from npcs where dm = ?', [session['username']])
+    db.execute('delete from games where dm_name = ? and game_name = ?', [session['username'], request.form['game_name']])
     db.commit()
+    flash('Successfully deleted ' + request.form['game_name'])
     return redirect(url_for('game_list'))
-
-# Simple route to a page to be able to view some more information on the game and allow you to travel between different sections of the DM-controlled parts of the game
-@app.route('/view_game', methods=['POST'])
-def view_game():
-    if not session.get('logged_in'):
-        abort(401)
-    db = get_db()
-    cur = db.execute('select * from games where dm_name = ?', [session['username']])
-    games = cur.fetchall()
-    cur = db.execute('select * from char_sheets where dm = ?', [session['username']])
-    players = cur.fetchall()
-    return render_template('game_home.html', **locals())
 
 # Adds a player to the game by adding a reference to the DM in the character sheet
 @app.route('/add_player_to_game/', methods=['POST'])
@@ -272,6 +284,7 @@ def add_to_game():
         return redirect(url_for('game_list'))
     db.execute('update char_sheets set dm = ?, game = ? where char_name = ? and author = ?', [session['username'], request.form['game'], to_add, request.form['author']])
     db.commit()
+    flash('Successfully added ' + to_add + ' to ' + request.form['game'])
     return redirect(url_for('game_list'))
 
 # Simple route to the page where you are able to see the current list of NPCs and add more
@@ -541,6 +554,29 @@ def roll_att():
 
 # Function that checks various things about the character sheet to make sure the user isn't cheating with updating their stats.
 def char_checker(form):
+
+    db_cols_to_readable = {
+            'char_name': 'Character Name',
+            'char_race': 'Character Race',
+            'char_class': 'Character Class',
+            'char_lvl': 'Character Level',
+            'char_speed': 'Character Speed',
+            'char_proficiency': 'Character Proficiency',
+            'alignment': 'Alignment',
+            'curr_health': 'Current Health',
+            'max_health': 'Max Health',
+            'char_armor': 'Character Armor',
+            'char_str': 'Strength',
+            'char_dex': 'Dexterity',
+            'char_const': 'Constitution',
+            'char_intel': 'Intelligence',
+            'char_wisdom': 'Wisdom',
+            'char_charisma': 'Charisma',
+            'char_perception': 'Perception',
+            'char_weap_prim': 'Primary Weapon',
+            'char_weap_prim_die': 'Primary Weapon Hit Die',
+            'char_weap_prim_num': 'Primary Weapon Number of Dice'
+    }
     secondary_weap_check = []
     for i in form:
         # Adds the secondary weapon info to be checked separately
@@ -570,7 +606,7 @@ def char_checker(form):
             elif i == 'game_pwd':
                 pass
             else:
-                return str(i) + ' was not filled out.'
+                return db_cols_to_readable[i] + ' was not filled out.'
 
     # Check if either all 3 secondary weapon fields are filled out, or all 3 are empty
     if secondary_weap_check[0] == '':
@@ -632,8 +668,9 @@ def char_checker(form):
     if current_hp > max_hp:
         return 'Current health cannot be higher than max health.'
     if current_hp == 0:
-        return 'Your character is either unconcious or, if the rest of the damage to take is more than your max health, dead.'
+        return 'Your character is either unconcious or dead.'
 
+    # If everything is okay, return an empty string, meaning 'okay'
     return ''
 
 # Runs the server in debug mode when file is run with "python3 main.py"

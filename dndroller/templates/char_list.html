@@ -27,9 +27,9 @@
             <div class="content">
                 {% with messages = get_flashed_messages() %}
                     {% if messages %}
-                        <div class="flash">
+                        <div class="alert alert-info" role="alert">
                             {% for message in messages %}
-                                <li>{{ message }}</li>
+                                {{ message }}
                             {% endfor %}
                         </div>
                     {% endif %}

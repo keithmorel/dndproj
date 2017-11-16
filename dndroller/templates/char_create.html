@@ -27,9 +27,9 @@
             <div class="content">
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}
-                <div class="flash">
+                <div class="alert alert-info" role="alert">
                     {% for message in messages %}
-                    <li>{{ message }}</li>
+                    {{ message }}
                     {% endfor %}
                 </div>
                 {% endif %}
@@ -45,23 +45,23 @@
                             <label>Race</label>
                             <select class="form-control" name="char_race" id="char_race">
                                 <option value="Dwarf">Dwarf</option>
-                                <option value="">----</option>
+                                <option value="" disabled>----</option>
                                 <option value="Hill Dwarf">Hill Dwarf</option>
                                 <option value="Mountain Dwarf">Mountain Dwarf</option>
-                                <option value="">----</option>
+                                <option value="" disabled>----</option>
                                 <option value="Elf">Elf</option>
                                 <option value="">----</option>
                                 <option value="High Elf">High Elf</option>
                                 <option value="Wood Elf">Wood Elf</option>
                                 <option value="DarkElf">Dark Elf</option>
-                                <option value="">----</option>
+                                <option value="" disabled>----</option>
                                 <option value="Halfling">Halfling</option>
-                                <option value="">----</option>
+                                <option value="" disabled>----</option>
                                 <option value="Lightfoot">Lightfoot</option>
                                 <option value="Stout">Stout</option>
-                                <option value="">----</option>
+                                <option value="" disabled>----</option>
                                 <option selected value="Human">Human</option>
-                                <option value="">----</option>
+                                <option value="" disabled>----</option>
                                 <option value="Calishite">Calishite</option>
                                 <option value="Chondathan">Chondathan</option>
                                 <option value="Damaran">Damaran</option>
@@ -71,20 +71,20 @@
                                 <option value="Shou">Shou</option>
                                 <option value="Tethyrian">Tethyrian</option>
                                 <option value="Turami">Turami</option>
-                                <option value="">----</option>
+                                <option value="" disabled>----</option>
                                 <option value="Dragonborn">Dragonborn</option>
-                                <option value="">----</option>
+                                <option value="" disabled>----</option>
                                 <option value="Aurak">Aurak</option>
                                 <option value="Baaz">Baaz</option>
                                 <option value="Bozak">Bozak</option>
                                 <option value="Kapak">Kapak</option>
                                 <option value="Sivak">Sivak</option>
-                                <option value="">----</option>
+                                <option value="" disabled>----</option>
                                 <option value="Gnome">Gnome</option>
-                                <option value="">----</option>
+                                <option value="" disabled>----</option>
                                 <option value="Forest Gnome">Forest Gnome</option>
                                 <option value="Rock Gnome">Rock Gnome</option>
-                                <option value="">----</option>
+                                <option value="" disabled>----</option>
                                 <option value="Half-Elf">Half-Elf</option>
                                 <option value="Half-Orc">Half-Orc</option>
                                 <option value="Tiefling">Tiefling</option>

@@ -26,60 +26,83 @@
             </nav>
             <div class="content">
                 {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        <div class="flash">
-                            {% for message in messages %}
-                                <li>{{ message }}</li>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+                {% if messages %}
+                <div class="alert alert-info" role="alert">
+                    {% for message in messages %}
+                    {{ message }}
+                    {% endfor %}
+                </div>
+                {% endif %}
                 {% endwith %}
-                {% if session.logged_in %}
-                    <form action="{{ url_for('create_game') }}" method="POST">
-                        <input type="text" name="game_name" value="MyGame"><br>
-                        <textarea name="game_notes" rows="7" cols="30">Type any general notes about the game here.</textarea>
-                        <input type="submit" value="Create">
-                    </form>
+                {% if no_games %}
+                <h2>Create A Game</h2>
+                <form action="{{ url_for('submit_game') }}" method="POST">
+                    <div class="form-group col-lg-6">
+                        <label>Game Name</label>
+                        <input class="form-control" type="text" name="game_name" placeholder="Game">
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label>Any general DM notes needed</label>
+                        <textarea class="form-control" name="game_notes" rows="10"></textarea>
+                    </div>
+                    <input class="btn btn-primary" type="submit" value="Create">
+                </form>
                 {% endif %}
                 <ol class="char_list">
-                    <h2>Your Game</h2>
+                    {% if not no_games %}
                     {% for game in games %}
-                        Owner: {{ game.dm_name }}
-                        Name: {{ game.game_name }}
-                        Notes: {{ game.game_notes }}<br>
-                    <form name="view_game" action="{{ url_for('view_game') }}" method="POST">
+                    <h2>{{ game.game_name }}</h2>
+                    <form action="{{ url_for('update_game') }}" method="POST">
+                        <input type="hidden" name="game_name" value="{{ game.game_name }}">
+                        <div class="form-group col-lg-6">
+                            <textarea class="form-control" name="game_notes" rows="10">{{ game.game_notes }}</textarea>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <input class="btn btn-primary" type="submit" value="Update">
+                        </div>
+                    </form>
+                    <form name="delete_game" action="{{ url_for('delete_game') }}" method="POST">
                         <input type="hidden" name="game_name" value="{{ game.game_name }}">
                         <input type="hidden" name="dm_name" value="{{ game.dm_name }}">
-                        <input type="submit" value="View">
+                        <div class="form-group col-md-4">
+                            <input class="btn btn-primary" type="submit" value="Delete">
+                        </div>
                     </form>
-                    <form name="delete_game" action="/delete_game/" method="POST">
-                        <input type="hidden" name="game_name" value="{{ game.game_name }}">
-                        <input type="hidden" name="dm_name" value="{{ game.dm_name }}">
-                        <input type="submit" value="Delete">
-                    </form>
-                    <h3>Players in Game</h3>
+                    <h3>Add Players to Your Game</h3>
                     <form name="add_to_game" action="/add_player_to_game/" method="POST">
                         <input type="hidden" name="game" value="{{ game.game_name }}">
-                        <input type="text" name="author" value="User">
-                        <input type="text" name="char_name" value="Character Name">
-                        <input type="submit" value="Add">
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label>Character Name</label>
+                                <input class="form-control" type="text" name="char_name" placeholder="Character Name">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Character Author</label>
+                                <input class="form-control" type="text" name="author" placeholder="User">
+                            </div>
+                        </div>
+                        <input class="btn btn-primary" type="submit" value="Add">
                     </form>
                     {% endfor %}
+                    {% if not no_players %}
+                    <h3>Players in Game</h3>
                     {% for player in players %}
-                        Name: {{ player.char_name }}
-                        Race: {{ player.char_race }}
-                        Class: {{ player.char_class }}
-                        Level: {{ player.char_lvl }}
-                        Alignment: {{ player.alignment }}
-                        Health: {{ player.curr_health }} / {{ player.max_health }}
-                        Primary Weapon: {{ player.char_weap_prim }} Hit Dice: {{ player.char_weap_prim_num }}d{{ player.char_weap_prim_die }}
-                        {% if player.char_weap_sec != '' %}
-                            Secondary Weapon: {{ player.char_weap_sec }} Hit Dice: {{ player.char_weap_sec_num }}d{{ player.char_weap_sec_die }}
-                        {% endif %}
-                        Skills: {{ player.char_skills }}
-                        <br>
+                    Name: {{ player.char_name }}
+                    Race: {{ player.char_race }}
+                    Class: {{ player.char_class }}
+                    Level: {{ player.char_lvl }}
+                    Alignment: {{ player.alignment }}
+                    Health: {{ player.curr_health }} / {{ player.max_health }}
+                    Primary Weapon: {{ player.char_weap_prim }} Hit Dice: {{ player.char_weap_prim_num }}d{{ player.char_weap_prim_die }}
+                    {% if player.char_weap_sec != '' %}
+                    Secondary Weapon: {{ player.char_weap_sec }} Hit Dice: {{ player.char_weap_sec_num }}d{{ player.char_weap_sec_die }}
+                    {% endif %}
+                    Skills: {{ player.char_skills }}
+                    <br>
                     {% endfor %}
-                 </ol>
+                    {% endif %}
+                    {% endif %}
+                </ol>
             </div>
             <div class="footer"></div>
         </div>
