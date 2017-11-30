@@ -387,12 +387,26 @@ def roll_all():
             # Add the mod to the row total
             dice_to_roll[key][4] += mod
     # Instantiate all the variables needed to output onto the HTML
+    all_rolls = []
+
     rolls_d4 = dice_to_roll['4'][2] + [str(dice_to_roll['4'][0]) + 'xD4']
+    all_rolls += [rolls_d4]
+
     rolls_d6 = dice_to_roll['6'][2] + [str(dice_to_roll['6'][0]) + 'xD6']
+    all_rolls += [rolls_d6]
+
     rolls_d8 = dice_to_roll['8'][2] + [str(dice_to_roll['8'][0]) + 'xD8']
+    all_rolls += [rolls_d8]
+
     rolls_d10 = dice_to_roll['10'][2] + [str(dice_to_roll['10'][0]) + 'xD10']
+    all_rolls += [rolls_d10]
+
     rolls_d20 = dice_to_roll['20'][2] + [str(dice_to_roll['20'][0]) + 'xD20']
+    all_rolls += [rolls_d20]
+
     rolls_dx = dice_to_roll[x][2] + [str(dice_to_roll[x][0]) + 'xD' + x]
+    all_rolls += [rolls_dx]
+    
     mod_d4 = dice_to_roll['4'][3]
     mod_d6 = dice_to_roll['6'][3]
     mod_d8 = dice_to_roll['8'][3]

@@ -35,8 +35,9 @@
                         </div>
                     {% endif %}
                 {% endwith %}
-                <table>
+                <table class="table">
                     <form action="/roll_all/" method="POST">
+                        <thead> 
                         <tr>
                             <th>Die to Roll</th>
                             <th>Number of Dice</th>
@@ -45,59 +46,62 @@
                             <th>+/-</th>
                             <th>Row Total</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         <tr>
-                            <td>D4</td>
-                            <td><input type="number" name="d4_rolls" min="0" value="0" style="width: 3em;"></td>
-                            <td><input type="number" name="d4_mod" value="0" style="width: 3em;"></td>
+                            <th scope="row">D4</th>
+                            <td><input class="form-control" type="number" name="d4_rolls" min="0" value="0" style="width: 5em;"></td>
+                            <td><input class="form-control" type="number" name="d4_mod" value="0" style="width: 5em;"></td>
                             <td>{{rolls_d4}}</td>
                             <td>{{mod_d4}}</td>
                             <td>{{d4_tot}}</td>
                         </tr>
                         <tr>
-                             <td>D6</td>
-                            <td><input type="number" name="d6_rolls" min="0" value="0" style="width: 3em;"></td>
-                            <td><input type="number" name="d6_mod" value="0" style="width: 3em;"></td>
+                            <th scope="row">D6</th>
+                            <td><input class="form-control" type="number" name="d6_rolls" min="0" value="0" style="width: 5em;"></td>
+                            <td><input class="form-control" type="number" name="d6_mod" value="0" style="width: 5em;"></td>
                             <td>{{rolls_d6}}</td>
                             <td>{{mod_d6}}</td>
                             <td>{{d6_tot}}</td>
                         </tr>
                         <tr>
-                            <td>D8</td>
-                            <td><input type="number" name="d8_rolls" min="0" value="0" style="width: 3em;"></td>
-                            <td><input type="number" name="d8_mod" value="0" style="width: 3em;"></td>
+                            <th scope="row">D8</td>
+                            <td><input class="form-control" type="number" name="d8_rolls" min="0" value="0" style="width: 5em;"></td>
+                            <td><input class="form-control" type="number" name="d8_mod" value="0" style="width: 5em;"></td>
                             <td>{{rolls_d8}}</td>
                             <td>{{mod_d8}}</td>
                             <td>{{d8_tot}}</td>
                         </tr>
                         <tr>
-                            <td>D10</td>
-                            <td><input type="number" name="d10_rolls" min="0" value="0" style="width: 3em;"></td>
-                            <td><input type="number" name="d10_mod" value="0" style="width: 3em;"></td>
+                            <th scope="row">D10</th>
+                            <td><input class="form-control" type="number" name="d10_rolls" min="0" value="0" style="width: 5em;"></td>
+                            <td><input class="form-control" type="number" name="d10_mod" value="0" style="width: 5em;"></td>
                             <td>{{rolls_d10}}</td>
                             <td>{{mod_d10}}</td>
                             <td>{{d10_tot}}</td>
                         </tr>
                         <tr>
-                            <td>D20</td>
-                            <td><input type="number" name="d20_rolls" min="0" value="0" style="width: 3em;"></td>
-                            <td><input type="number" name="d20_mod" value="0" style="width: 3em;"></td>
+                            <th scope="row">D20</th>
+                            <td><input class="form-control" type="number" name="d20_rolls" min="0" value="0" style="width: 5em;"></td>
+                            <td><input class="form-control" type="number" name="d20_mod" value="0" style="width: 5em;"></td>
                             <td>{{rolls_d20}}</td>
                             <td>{{mod_d20}}</td>
                             <td>{{d20_tot}}</td>
                         </tr>
                         <tr>
-                            <td>D<input type="number" name="DX" min="1" value="1" style="width: 2.7em;"></td>
-                            <td><input type="number" name="dx_rolls" min="0" value="0" style="width: 3em;"></td>
-                            <td><input type="number" name="dx_mod" value="0" style="width: 3em;"></td>
+                            <th scope="row">DX<input class="form-control" type="number" name="DX" min="1" value="1" style="width: 5em;"></th>
+                            <td><input class="form-control" type="number" name="dx_rolls" min="0" value="0" style="width: 5em;"></td>
+                            <td><input class="form-control" type="number" name="dx_mod" value="0" style="width: 5em;"></td>
                             <td>{{rolls_dx}}</td>
                             <td>{{mod_dx}}</td>
                             <td>{{dx_tot}}</td>
                         </tr>
                         <tr>
-                            <td colspan="2"><input type="submit" value="Reset"></td>
-                            <td colspan="2"><input type="submit" value="Roll Dice!"></td>
+                            <td colspan="2"><input class="btn btn-primary" type="submit" value="Reset"></td>
+                            <td colspan="2"><input class="btn btn-primary" type="submit" value="Roll Dice!"></td>
                             <td colspan="2" style="font-weight: bold;">Final Result: {{result}}</td>
                         </tr>
+                    <tbody>
                     </form>
                 </table>
             </div>
