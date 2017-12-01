@@ -34,61 +34,54 @@
                         </div>
                     {% endif %}
                 {% endwith %}
-                <ol class="char_list">
+                <table class="table">
                     <h2>Your Character List</h2>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>DM</th>
+                            <th>Race</th>
+                            <th>Class</th>
+                            <th>Level</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                    </thead>
+                    <tbody>
                     {% for character in entries %}
-                    <li>Character Name: {{ character.char_name }}
-                        {% if character.dm != None %}
-                            DM: {{ character.dm }}
-                        {% endif %}
-                        Race: {{ character.char_race }}
-                        Class: {{ character.char_class }}
-                        Level: {{ character.char_lvl }}<br>
-                        Speed: {{ character.char_speed }} feet
-                        Proficiency + {{ character.char_proficiency }}
-                        Alignment: {{ character.alignment }}<br>
-                        Health: {{ character.curr_health }} / {{ character.max_health }}
-                        Armor: {{ character.char_armor }}<br>
-                        Strength: {{ character.char_str }}
-                        Dexterity: {{ character.char_dex }}
-                        Constitution: {{ character.char_const }}
-                        Intelligence: {{ character.char_intel }}
-                        Wisdom: {{ character.char_wisdom }}
-                        Charisma: {{ character.char_charisma }}
-                        Perception: {{ character.char_perception }}<br>
-                        Primary Weapon: {{ character.char_weap_prim }} {{ character.char_weap_prim_num }}d{{ character.char_weap_prim_die }}<br>
-                        {% if character.char_weap_sec != '' %}
-                            Secondary Weapon: {{ character.char_weap_sec }} {{ character.char_weap_sec_num }}d{{ character.char_weap_sec_die }}<br>
-                        {% endif %}
-                        {% if character.char_inv != '' %}
-                            Inventory: {{ character.char_inv }}<br>
-                        {% endif %}
-                        {% if character.char_notes != '' %}
-                            Notes: {{ character.char_notes }}<br>
-                        {% endif %}
-                        {% if character.char_skills != '' %}
-                            Skills: {{ character.char_skills }}<br>
-                        {% endif %}
-                        <form name="view_char" action="/view_char" method="POST">
-                            <input type="hidden" name="to_view" value="{{ character.char_name }}">
-                            <input type="hidden" name="user" value="{{ character.author }}">
-                            <input type="submit" value="View">
-                        </form>
-                        <form name="update_char" action="/update_char" method="POST">
-                            <input type="hidden" name="to_update" value="{{ character.char_name }}">
-                            <input type="submit" value="Update">
-                        </form>
-                        <form name="delete_char" action="/delete_char/" method="POST">
-                            <input type="hidden" name="to_delete" value="{{ character.char_name }}">
-                            <input type="submit" value="Delete">
-                        </form>
-                    </li>
-                    <h2>End Character</h2>
-                    {% else %}
-                        <li>No characters available</li>
+                        <tr>
+                            <th scope="row">{{ character.char_name }}</th>
+                            {% if character.dm != None %}
+                            <td>{{ character.dm }}</td>
+                            {% else %}
+                            <td>None</td>
+                            {% endif %}
+                            <td>{{ character.char_race }}</td>
+                            <td>{{ character.char_class }}</td>
+                            <td>{{ character.char_lvl }}</td>
+                            <td>
+                                <form name="view_char" action="/view_char" method="POST">
+                                    <input type="hidden" name="to_view" value="{{ character.char_name }}">
+                                    <input type="hidden" name="user" value="{{ character.author }}">
+                                    <input class="btn btn-primary" type="submit" value="View">
+                                </form>
+                            </td>
+                            <td>
+                                <form name="update_char" action="/update_char" method="POST">
+                                    <input type="hidden" name="to_update" value="{{ character.char_name }}">
+                                    <input class="btn btn-primary" type="submit" value="Update">
+                                </form>
+                            </td>
+                            <td>
+                                <form name="delete_char" action="/delete_char/" method="POST">
+                                    <input type="hidden" name="to_delete" value="{{ character.char_name }}">
+                                    <input class="btn btn-primary" type="submit" value="Delete">
+                                </form>
+                            </td>
+                        </tr>
                     {% endfor %}
-                </ol>
-
+                    </tbody>
+                </table>
                 </div>
             <div class="footer"></div>
         </div>
