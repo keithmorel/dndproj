@@ -325,31 +325,22 @@ def alignment_details():
 # Default home page with all information filled in as blanks, showing you how the information is formatted.
 @app.route('/roll')
 def all_dice():
-    rolls_d4 = []    # Lists of accumulated rolls for all the different dice
-    rolls_d6 = []
-    rolls_d8 = []
-    rolls_d10 = []
-    rolls_d20 = []
-    rolls_dx = []
-    mod_d4 = 0    # All the modifiers, + or -, that are added to the total of that dice's rolls, not each individual roll
-    mod_d6 = 0
-    mod_d8 = 0
-    mod_d10 = 0
-    mod_d20 = 0
-    mod_dx = 0
-    d4_tot = 0    # Accumulated totals of each row from the lists above, mostly just for the result calculation
-    d6_tot = 0
-    d8_tot = 0
-    d10_tot = 0
-    d20_tot = 0
-    dx_tot = 0
+    arb_die_val = '1'
+    dice_to_roll = {
+        '4': [0, 0, '', '', ''],        
+        '6': [0, 0, '', '', ''],        
+        '8': [0, 0, '', '', ''],        
+        '10': [0, 0, '', '', ''],        
+        '20': [0, 0, '', '', ''],        
+        arb_die_val: [0, 0, '', '', '']
+    }
     result = 0    # Final result that appears at the bottom right of the table
     return render_template('./mult_dice.html', **locals())
 
 # Main rolling function that takes in all the info filled out on the rolling page and rolls the dice and sets all the variables
 @app.route("/roll_all/", methods=['POST'])
 def roll_all():
-    x = str(request.form['DX'])
+    arb_die_val = str(request.form['DX'])
     # Each dictionary item has an array with the following info, [number of rolls, modifier, list of rolls, modifier as a string, row total], for each die
     dice_to_roll = {
             '4': [request.form['d4_rolls'], request.form['d4_mod'], [], '', 0],
@@ -357,7 +348,7 @@ def roll_all():
             '8': [request.form['d8_rolls'], request.form['d8_mod'], [], '', 0],
             '10': [request.form['d10_rolls'], request.form['d10_mod'], [], '', 0],
             '20': [request.form['d20_rolls'], request.form['d20_mod'], [], '', 0],
-            x: [request.form['dx_rolls'], request.form['dx_mod'], [], '', 0]
+            arb_die_val: [request.form['dx_rolls'], request.form['dx_mod'], [], '', 0]
     }
     result = 0
     for key in dice_to_roll:
@@ -387,38 +378,12 @@ def roll_all():
             # Add the mod to the row total
             dice_to_roll[key][4] += mod
     # Instantiate all the variables needed to output onto the HTML
-    all_rolls = []
+    for key in dice_to_roll:
+        if dice_to_roll[key][2] == []:
+            dice_to_roll[key][2] = ''
+        if dice_to_roll[key][4] == 0:
+            dice_to_roll[key][4] = ''
 
-    rolls_d4 = dice_to_roll['4'][2] + [str(dice_to_roll['4'][0]) + 'xD4']
-    all_rolls += [rolls_d4]
-
-    rolls_d6 = dice_to_roll['6'][2] + [str(dice_to_roll['6'][0]) + 'xD6']
-    all_rolls += [rolls_d6]
-
-    rolls_d8 = dice_to_roll['8'][2] + [str(dice_to_roll['8'][0]) + 'xD8']
-    all_rolls += [rolls_d8]
-
-    rolls_d10 = dice_to_roll['10'][2] + [str(dice_to_roll['10'][0]) + 'xD10']
-    all_rolls += [rolls_d10]
-
-    rolls_d20 = dice_to_roll['20'][2] + [str(dice_to_roll['20'][0]) + 'xD20']
-    all_rolls += [rolls_d20]
-
-    rolls_dx = dice_to_roll[x][2] + [str(dice_to_roll[x][0]) + 'xD' + x]
-    all_rolls += [rolls_dx]
-    
-    mod_d4 = dice_to_roll['4'][3]
-    mod_d6 = dice_to_roll['6'][3]
-    mod_d8 = dice_to_roll['8'][3]
-    mod_d10 = dice_to_roll['10'][3]
-    mod_d20 = dice_to_roll['20'][3]
-    mod_dx = dice_to_roll[x][3]
-    d4_tot = dice_to_roll['4'][4]
-    d6_tot = dice_to_roll['6'][4]
-    d8_tot = dice_to_roll['8'][4]
-    d10_tot = dice_to_roll['10'][4]
-    d20_tot = dice_to_roll['20'][4]
-    dx_tot = dice_to_roll[x][4]
     return render_template('mult_dice.html', **locals())
 
 # Updates the char_inv value in the database so the user can comstantly update while playing

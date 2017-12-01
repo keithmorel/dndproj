@@ -50,54 +50,85 @@
                     <tbody>
                         <tr>
                             <th scope="row">D4</th>
+                            {% if dice_to_roll['4'][0] == 0 %}
                             <td><input class="form-control" type="number" name="d4_rolls" min="0" value="0" style="width: 5em;"></td>
                             <td><input class="form-control" type="number" name="d4_mod" value="0" style="width: 5em;"></td>
-                            <td>{{rolls_d4}}</td>
-                            <td>{{mod_d4}}</td>
-                            <td>{{d4_tot}}</td>
+                            {% else %}
+                            <td><input class="form-control" type="number" name="d4_rolls" min="0" value="{{ dice_to_roll['4'][0] }}" style="width: 5em;"></td>
+                            <td><input class="form-control" type="number" name="d4_mod" value="{{ dice_to_roll['4'][1] }}" style="width: 5em;"></td>
+                            {% endif %}
+                            <td>{{dice_to_roll['4'][2]}}</td>
+                            <td>{{dice_to_roll['4'][3]}}</td>
+                            <td>{{dice_to_roll['4'][4]}}</td>
                         </tr>
                         <tr>
                             <th scope="row">D6</th>
+                            {% if dice_to_roll['6'][0] == 0 %}
                             <td><input class="form-control" type="number" name="d6_rolls" min="0" value="0" style="width: 5em;"></td>
                             <td><input class="form-control" type="number" name="d6_mod" value="0" style="width: 5em;"></td>
-                            <td>{{rolls_d6}}</td>
-                            <td>{{mod_d6}}</td>
-                            <td>{{d6_tot}}</td>
+                            {% else %}
+                            <td><input class="form-control" type="number" name="d6_rolls" min="0" value="{{ dice_to_roll['6'][0] }}" style="width: 5em;"></td>
+                            <td><input class="form-control" type="number" name="d6_mod" value="{{ dice_to_roll['6'][1] }}" style="width: 5em;"></td>
+                            <td>{{dice_to_roll['6'][2]}}</td>
+                            <td>{{dice_to_roll['6'][3]}}</td>
+                            <td>{{dice_to_roll['6'][4]}}</td>
+                            {% endif %}
                         </tr>
                         <tr>
                             <th scope="row">D8</td>
+                            {% if dice_to_roll['8'][0] == 0 %}
                             <td><input class="form-control" type="number" name="d8_rolls" min="0" value="0" style="width: 5em;"></td>
                             <td><input class="form-control" type="number" name="d8_mod" value="0" style="width: 5em;"></td>
-                            <td>{{rolls_d8}}</td>
-                            <td>{{mod_d8}}</td>
-                            <td>{{d8_tot}}</td>
+                            {% else %}
+                            <td><input class="form-control" type="number" name="d8_rolls" min="0" value="{{ dice_to_roll['8'][0] }}" style="width: 5em;"></td>
+                            <td><input class="form-control" type="number" name="d8_mod" value="{{ dice_to_roll['8'][1] }}" style="width: 5em;"></td>
+                            <td>{{dice_to_roll['8'][2]}}</td>
+                            <td>{{dice_to_roll['8'][3]}}</td>
+                            <td>{{dice_to_roll['8'][4]}}</td>
+                            {% endif %}
                         </tr>
                         <tr>
                             <th scope="row">D10</th>
+                            {% if dice_to_roll['10'][0] == 0 %}
                             <td><input class="form-control" type="number" name="d10_rolls" min="0" value="0" style="width: 5em;"></td>
                             <td><input class="form-control" type="number" name="d10_mod" value="0" style="width: 5em;"></td>
-                            <td>{{rolls_d10}}</td>
-                            <td>{{mod_d10}}</td>
-                            <td>{{d10_tot}}</td>
+                            {% else %}
+                            <td><input class="form-control" type="number" name="d10_rolls" min="0" value="{{ dice_to_roll['10'][0] }}" style="width: 5em;"></td>
+                            <td><input class="form-control" type="number" name="d10_mod" value="{{ dice_to_roll['10'][1] }}" style="width: 5em;"></td>
+                            <td>{{dice_to_roll['10'][2]}}</td>
+                            <td>{{dice_to_roll['10'][3]}}</td>
+                            <td>{{dice_to_roll['10'][4]}}</td>
+                            {% endif %}
                         </tr>
                         <tr>
                             <th scope="row">D20</th>
+                            {% if dice_to_roll['20'][0] == 0 %}
                             <td><input class="form-control" type="number" name="d20_rolls" min="0" value="0" style="width: 5em;"></td>
                             <td><input class="form-control" type="number" name="d20_mod" value="0" style="width: 5em;"></td>
-                            <td>{{rolls_d20}}</td>
-                            <td>{{mod_d20}}</td>
-                            <td>{{d20_tot}}</td>
+                            {% else %}
+                            <td><input class="form-control" type="number" name="d20_rolls" min="0" value="{{ dice_to_roll['20'][0] }}" style="width: 5em;"></td>
+                            <td><input class="form-control" type="number" name="d20_mod" value="{{ dice_to_roll['20'][1] }}" style="width: 5em;"></td>
+                            <td>{{dice_to_roll['20'][2]}}</td>
+                            <td>{{dice_to_roll['20'][3]}}</td>
+                            <td>{{dice_to_roll['20'][4]}}</td>
+                            {% endif %}
                         </tr>
                         <tr>
+                            {% if dice_to_roll[arb_die_val][0] == 0 %}
                             <th scope="row">DX<input class="form-control" type="number" name="DX" min="1" value="1" style="width: 5em;"></th>
                             <td><input class="form-control" type="number" name="dx_rolls" min="0" value="0" style="width: 5em;"></td>
                             <td><input class="form-control" type="number" name="dx_mod" value="0" style="width: 5em;"></td>
-                            <td>{{rolls_dx}}</td>
-                            <td>{{mod_dx}}</td>
-                            <td>{{dx_tot}}</td>
+                            {% else %}
+                            <th scope="row">DX<input class="form-control" type="number" name="DX" min="1" value="{{ arb_die_val }}" style="width: 5em;"></th>
+                            <td><input class="form-control" type="number" name="dx_rolls" min="0" value="{{ dice_to_roll[arb_die_val][0] }}" style="width: 5em;"></td>
+                            <td><input class="form-control" type="number" name="dx_mod" value="{{ dice_to_roll[arb_die_val][1] }}" style="width: 5em;"></td>
+                            <td>{{dice_to_roll[arb_die_val][2]}}</td>
+                            <td>{{dice_to_roll[arb_die_val][3]}}</td>
+                            <td>{{dice_to_roll[arb_die_val][4]}}</td>
+                            {% endif %}
                         </tr>
                         <tr>
-                            <td colspan="2"><input class="btn btn-primary" type="submit" value="Reset"></td>
+                            <td colspan="2"><a class="btn btn-primary" href="{{ url_for('all_dice') }}">Reset</td>
                             <td colspan="2"><input class="btn btn-primary" type="submit" value="Roll Dice!"></td>
                             <td colspan="2" style="font-weight: bold;">Final Result: {{result}}</td>
                         </tr>
