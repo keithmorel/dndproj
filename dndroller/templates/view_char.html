@@ -35,63 +35,128 @@
                     {% endif %}
                 {% endwith %}
                 {% for character in entry %}
-                    Character Name: {{ character.char_name }}<br>
-                    Race: {{ character.char_race }}<br>
-                    Class: {{ character.char_class }}<br>
-                    Level: {{ character.char_lvl }}<br>
-                    Speed: {{ character.char_speed }} feet<br>
-                    Proficiency Bonus: + {{ character.char_proficiency }}<br>
-                    Alignment: {{ character.alignment }}<br>
-                    Health: {{ character.curr_health }} / {{ character.max_health }}<br>
-                    Armor: {{ character.char_armor }}<br>
-                    <form name="roll_str" action="/roll_att/" method="POST">
-                        Strenth: {{ character.char_str }}
-                        <input type="hidden" name="att_name" value="Strength">
-                        <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <input type="hidden" name="att_val" value="{{ character.char_str }}">
-                        <input type="submit" value="Roll Strength">
-                        {{ init_str_roll }} {{ mod_str }} {{ str_roll }}<br>
-                    </form>
-                    <form name="roll_dex" action="/roll_att/" method="POST">
-                        Dexterity: {{ character.char_dex }}
-                        <input type="hidden" name="att_name" value="Dexterity">
-                        <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <input type="hidden" name="att_val" value="{{ character.char_dex }}">
-                        <input type="submit" value="Roll Dexterity">
-                        {{ init_dex_roll }} {{ mod_dex }} {{ dex_roll }}<br>
-                    </form>
-                    <form name="roll_const" action="/roll_att/" method="POST">
-                        Constitution: {{ character.char_const }}
-                        <input type="hidden" name="att_name" value="Constitution">
-                        <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <input type="hidden" name="att_val" value="{{ character.char_const }}">
-                        <input type="submit" value="Roll Constitution">
-                        {{ init_const_roll }} {{ mod_const }} {{ const_roll }}<br>
-                    </form>
-                    <form name="roll_intel" action="/roll_att/" method="POST">
-                        Intelligence: {{ character.char_intel }}
-                        <input type="hidden" name="att_name" value="Intelligence">
-                        <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <input type="hidden" name="att_val" value="{{ character.char_intel }}">
-                        <input type="submit" value="Roll Intelligence">
-                        {{ init_intel_roll }} {{ mod_intel }} {{ intel_roll }}<br>
-                    </form>
-                    <form name="roll_wisdom" action="/roll_att/" method="POST">
-                        Wisdom: {{ character.char_wisdom }}
-                        <input type="hidden" name="att_name" value="Wisdom">
-                        <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <input type="hidden" name="att_val" value="{{ character.char_wisdom }}">
-                        <input type="submit" value="Roll Wisdom">
-                        {{ init_wisdom_roll }} {{ mod_wisdom }} {{ wisdom_roll }}<br>
-                    </form>
-                    <form name="roll_charisma" action="/roll_att/" method="POST">
-                        Charisma: {{ character.char_charisma }}
-                        <input type="hidden" name="att_name" value="Charisma">
-                        <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <input type="hidden" name="att_val" value="{{ character.char_charisma }}">
-                        <input type="submit" value="Roll Charisma">
-                        {{ init_charisma_roll }} {{ mod_charisma }} {{ charisma_roll }}<br>
-                    </form>
+                <div class="form-row">
+                    <div class="form-group col-sm-2">
+                        <label>Name</label>
+                        <input type="text" class="form-control" value="{{ character.char_name }}" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Race</label>
+                        <input type="text" class="form-control" value="{{ character.char_race }}" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Class</label>
+                        <input type="text" class="form-control" value="{{ character.char_class }}" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Level</label>
+                        <input type="text" class="form-control" value="{{ character.char_lvl }}" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Alignment</label>
+                        <input type="text" class="form-control" value="{{ character.alignment }}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-sm-2">
+                        <label>Speed</label>
+                        <input type="text" class="form-control" value="{{ character.char_speed }} feet" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Proficiency Bonus</label>
+                        <input type="text" class="form-control" value="+ {{ character.char_proficiency }}" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Current Health</label>
+                        <input type="text" class="form-control" value="{{ character.curr_health }}" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Max Health</label>
+                        <input type="text" class="form-control" value="{{ character.max_health }}" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Armor</label>
+                        <input type="text" class="form-control" value="{{ character.char_armor }}" readonly>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Attribute</th>
+                            <th>Level</th>
+                            <th>Result</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Strength</th> 
+                            <td>{{ character.char_str }}</td>
+                            <td>{{ str_roll }}</td>
+                            <form name="roll_str" action="/roll_att/" method="POST">
+                                <input type="hidden" name="att_name" value="Strength">
+                                <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                                <input type="hidden" name="att_val" value="{{ character.char_str }}">
+                                <td><input class="btn btn-primary" type="submit" value="Roll Strength"></td>
+                            </form>
+                        </tr>
+                        <tr>
+                            <th scope="row">Dexterity</th> 
+                            <td>{{ character.char_dex }}</td>
+                            <td>{{ dex_roll }}</td>
+                            <form name="roll_dex" action="/roll_att/" method="POST">
+                                <input type="hidden" name="att_name" value="Dexterity">
+                                <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                                <input type="hidden" name="att_val" value="{{ character.char_dex }}">
+                                <td><input class="btn btn-primary" type="submit" value="Roll Dexterity"></td>
+                            </form>
+                        </tr>
+                        <tr>
+                            <th scope="row">Constitution</th> 
+                            <td>{{ character.char_const }}</td>
+                            <td>{{ const_roll }}</td>
+                            <form name="roll_const" action="/roll_att/" method="POST">
+                                <input type="hidden" name="att_name" value="Constitution">
+                                <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                                <input type="hidden" name="att_val" value="{{ character.char_const }}">
+                                <td><input class="btn btn-primary" type="submit" value="Roll Constitution"></td>
+                            </form>
+                        </tr>
+                        <tr>
+                            <th scope="row">Intelligence</th> 
+                            <td>{{ character.char_intel }}</td>
+                            <td>{{ intel_roll }}</td>
+                            <form name="roll_intel" action="/roll_att/" method="POST">
+                                <input type="hidden" name="att_name" value="Intelligence">
+                                <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                                <input type="hidden" name="att_val" value="{{ character.char_intel }}">
+                                <td><input class="btn btn-primary" type="submit" value="Roll Intelligence"></td>
+                            </form>
+                        </tr>
+                        <tr>
+                            <th scope="row">Wisdom</th>
+                            <td>{{ character.char_wisdom }}</td>
+                            <td>{{ wisdom_roll }}</td>
+                            <form name="roll_wisdom" action="/roll_att/" method="POST">
+                                <input type="hidden" name="att_name" value="Wisdom">
+                                <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                                <input type="hidden" name="att_val" value="{{ character.char_wisdom }}">
+                                <td><input class="btn btn-primary" type="submit" value="Roll Wisdom"></td>
+                            </form>
+                        </tr>
+                        <tr>
+                            <th scope="row">Charisma</th>
+                            <td>{{ character.char_charisma }}</td>
+                            <td>{{ charisma_roll }}</td>
+                            <form name="roll_wisdom" action="/roll_att/" method="POST">
+                                <input type="hidden" name="att_name" value="Charisma">
+                                <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                                <input type="hidden" name="att_val" value="{{ character.char_charisma }}">
+                                <td><input class="btn btn-primary" type="submit" value="Roll Charisma"></td>
+                            </form>
+                        </tr>
+                    </tbody>
+                </table>
                     Perception: {{ character.char_perception }}<br>                   
                     <form name="roll_primary" action="/roll_attack/" method="POST">
                         Primary Weapon: {{ character.char_weap_prim }} Hit Dice: {{ character.char_weap_prim_num }}d{{ character.char_weap_prim_die }}
