@@ -86,19 +86,21 @@
                     {% endfor %}
                     {% if not no_players %}
                     <h3>Players in Game</h3>
+                    <table class="table">
+                        <thead>
+                            <th>Name</th>
+                            <th>Race</th>
+                            <th>Class</th>
+                            <th>Level</th>
+                        </thead>
                     {% for player in players %}
-                    Name: {{ player.char_name }}
-                    Race: {{ player.char_race }}
-                    Class: {{ player.char_class }}
-                    Level: {{ player.char_lvl }}
-                    Alignment: {{ player.alignment }}
-                    Health: {{ player.curr_health }} / {{ player.max_health }}
-                    Primary Weapon: {{ player.char_weap_prim }} Hit Dice: {{ player.char_weap_prim_num }}d{{ player.char_weap_prim_die }}
-                    {% if player.char_weap_sec != '' %}
-                    Secondary Weapon: {{ player.char_weap_sec }} Hit Dice: {{ player.char_weap_sec_num }}d{{ player.char_weap_sec_die }}
-                    {% endif %}
-                    Skills: {{ player.char_skills }}
-                    <br>
+                        <tbody>
+                            <th scope="row">{{ player.char_name }}</th>
+                            <td>{{ player.char_race }}</th>
+                            <td>{{ player.char_class }}</th>
+                            <td>{{ player.char_lvl }}</th>
+                        </tbody>
+                    </table>
                     {% endfor %}
                     {% endif %}
                     {% endif %}
