@@ -35,50 +35,6 @@
                     {% endif %}
                 {% endwith %}
                 {% for character in entry %}
-                <div class="form-row">
-                    <div class="form-group col-sm-2">
-                        <label>Name</label>
-                        <input type="text" class="form-control" value="{{ character.char_name }}" readonly>
-                    </div>
-                    <div class="form-group col-sm-2">
-                        <label>Race</label>
-                        <input type="text" class="form-control" value="{{ character.char_race }}" readonly>
-                    </div>
-                    <div class="form-group col-sm-2">
-                        <label>Class</label>
-                        <input type="text" class="form-control" value="{{ character.char_class }}" readonly>
-                    </div>
-                    <div class="form-group col-sm-2">
-                        <label>Level</label>
-                        <input type="text" class="form-control" value="{{ character.char_lvl }}" readonly>
-                    </div>
-                    <div class="form-group col-sm-2">
-                        <label>Alignment</label>
-                        <input type="text" class="form-control" value="{{ character.alignment }}" readonly>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-sm-2">
-                        <label>Speed</label>
-                        <input type="text" class="form-control" value="{{ character.char_speed }} feet" readonly>
-                    </div>
-                    <div class="form-group col-sm-2">
-                        <label>Proficiency Bonus</label>
-                        <input type="text" class="form-control" value="+ {{ character.char_proficiency }}" readonly>
-                    </div>
-                    <div class="form-group col-sm-2">
-                        <label>Current Health</label>
-                        <input type="text" class="form-control" value="{{ character.curr_health }}" readonly>
-                    </div>
-                    <div class="form-group col-sm-2">
-                        <label>Max Health</label>
-                        <input type="text" class="form-control" value="{{ character.max_health }}" readonly>
-                    </div>
-                    <div class="form-group col-sm-2">
-                        <label>Armor</label>
-                        <input type="text" class="form-control" value="{{ character.char_armor }}" readonly>
-                    </div>
-                </div>
                 <table class="table">
                     <thead>
                         <tr>
@@ -155,47 +111,131 @@
                                 <td><input class="btn btn-primary" type="submit" value="Roll Charisma"></td>
                             </form>
                         </tr>
+                        <tr>
+                            <th scope="row">Perception</th>
+                            <td>{{ character.char_perception }}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
                     </tbody>
                 </table>
-                    Perception: {{ character.char_perception }}<br>                   
-                    <form name="roll_primary" action="/roll_attack/" method="POST">
-                        Primary Weapon: {{ character.char_weap_prim }} Hit Dice: {{ character.char_weap_prim_num }}d{{ character.char_weap_prim_die }}
-                        <input type="hidden" name="weapon" value="Primary">
-                        <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <input type="hidden" name="char_weap_num" value="{{ character.char_weap_prim_num }}">
-                        <input type="hidden" name="char_weap_die" value="{{ character.char_weap_prim_die }}">
-                        <input type="submit" value="Attack!">
-                        {{ prim_result }}
-                    </form>
-                    {% if character.char_weap_sec != '' %}
-                        <form name="roll_secondary" action="/roll_attack/" method="POST">
-                            Secondary Weapon: {{ character.char_weap_sec }} Hit Dice: {{ character.char_weap_sec_num }}d{{ character.char_weap_sec_die }}
-                            <input type="hidden" name="weapon" value="Secondary">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Weapon</th>
+                            <th>Hit Dice</th>
+                            <th>Amount</th>
+                            <th>Damage</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">{{ character.char_weap_prim }}</th>
+                            <td>{{ character.char_weap_prim_num }}</td>
+                            <td>{{ character.char_weap_prim_die }}</td>
+                            <td>{{ prim_result }}</td>
+                            <td>
+                                <form name="roll_primary" action="/roll_attack/" method="POST">
+                                    <input type="hidden" name="weapon" value="Primary">
+                                    <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                                    <input type="hidden" name="char_weap_num" value="{{ character.char_weap_prim_num }}">
+                                    <input type="hidden" name="char_weap_die" value="{{ character.char_weap_prim_die }}">
+                                    <input class="btn btn-primary" type="submit" value="Attack!">
+                                </form>
+                            </td>
+                        </tr>
+                        {% if character.char_weap_sec != '' %}
+                        <tr>
+                            <th scope="row">{{ character.char_weap_sec }}</th>
+                            <td>{{ character.char_weap_sec_num }}</td>
+                            <td>{{ character.char_weap_sec_die }}</td>
+                            <td>{{ sec_result }}</td>
+                            <td>
+                                <form name="roll_secondary" action="/roll_attack/" method="POST">
+                                    <input type="hidden" name="weapon" value="Secondary">
+                                    <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                                    <input type="hidden" name="char_weap_num" value="{{ character.char_weap_sec_num}}">
+                                    <input type="hidden" name="char_weap_die" value="{{ character.char_weap_sec_die }}">
+                                    <input class="btn btn-primary" type="submit" value="Attack!">
+                                </form>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                <div class="form-row">
+                    <div class="form-group col-sm-2">
+                        <label>Name</label>
+                        <input type="text" class="form-control" value="{{ character.char_name }}" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Race</label>
+                        <input type="text" class="form-control" value="{{ character.char_race }}" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Class</label>
+                        <input type="text" class="form-control" value="{{ character.char_class }}" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Level</label>
+                        <input type="text" class="form-control" value="{{ character.char_lvl }}" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Alignment</label>
+                        <input type="text" class="form-control" value="{{ character.alignment }}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-sm-2">
+                        <label>Speed</label>
+                        <input type="text" class="form-control" value="{{ character.char_speed }} feet" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Proficiency Bonus</label>
+                        <input type="text" class="form-control" value="+ {{ character.char_proficiency }}" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Current Health</label>
+                        <input type="text" class="form-control" value="{{ character.curr_health }}" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Max Health</label>
+                        <input type="text" class="form-control" value="{{ character.max_health }}" readonly>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <label>Armor</label>
+                        <input type="text" class="form-control" value="{{ character.char_armor }}" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label>Inventory</label>
+                        <form name="update_inv" action="/update_inv/" method="POST">
                             <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                            <input type="hidden" name="char_weap_num" value="{{ character.char_weap_sec_num}}">
-                            <input type="hidden" name="char_weap_die" value="{{ character.char_weap_sec_die }}">
-                            <input type="submit" value="Attack!">
-                            {{ sec_result }}
-                    </form>
-                    {% endif %}
-                    <form name="update_inv" action="/update_inv/" method="POST">
-                        Inventory:
-                        <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <textarea name="char_inv" rows="3" cols="30">{{ character.char_inv }}</textarea>
-                        <input type="submit" value="Update Inventory">
-                    </form>
-                    <form name="update_notes" action="/update_notes/" method="POST">
-                        Notes:
-                        <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <textarea name="char_notes" rows="3" cols="30">{{ character.char_notes }}</textarea>
-                        <input type="submit" value="Update Notes">
-                    </form>
-                    <form name="update_skills" action="/update_skills/" method="POST">
-                        Skills:
-                        <input type="hidden" name="char_name" value="{{ character.char_name }}">
-                        <textarea name="char_skills" rows="3" cols="30">{{ character.char_skills }}</textarea>
-                        <input type="submit" value="Update Skills">
-                    </form>
+                            <textarea class="form-control" name="char_inv" rows="3" cols="30">{{ character.char_inv }}</textarea>
+                        </form>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Notes</label>
+                        <form name="update_notes" action="/update_notes/" method="POST">
+                            <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                            <textarea class="form-control" name="char_notes" rows="3" cols="30">{{ character.char_notes }}</textarea>
+                        </form>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Skills</label>
+                            <form name="update_skills" action="/update_skills/" method="POST">
+                            <input type="hidden" name="char_name" value="{{ character.char_name }}">
+                            <textarea class="form-control" name="char_skills" rows="3" cols="30">{{ character.char_skills }}</textarea>
+                            </form>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <input form="update_inv" class="btn btn-primary" type="submit" value="Update Inventory">
+                    <input form="update_notes" class="btn btn-primary" type="submit" value="Update Notes">
+                    <input form="update_skills" class="btn btn-primary" type="submit" value="Update Skills">
+                </div>
                 {% endfor %}
             </div>
             <div class="footer"></div>

@@ -235,16 +235,27 @@
                         <div class="form-row">
                             <div class="form-group col-md-3">
                                 <label>Secondary Weapon (Optional)</label>
+                                {% if character.char_weap_sec != '' %}
+                                <input class="form-control" type="text" name="char_weap_sec" value="{{ character.char_weap_sec }}">
+                                {% else %}
                                 <input class="form-control" type="text" name="char_weap_sec" placeholder="Sword">
+                                {% endif %}
                             </div>
                             <div class="form-group col-md-3">
                                 <label>What Die?</label>
+                                {% if character.char_weap_sec != '' %}
+                                <input class="form-control" type="number" min="4" max="20" value="{{ character.char_weap_sec_die }}" name="char_weap_sec_die">
+                                {% else %}
                                 <input class="form-control" type="number" min="4" max="20" placeholder="4" name="char_weap_sec_die">
+                                {% endif %}
                             </div>
-
                             <div class="form-group col-md-3">
                                 <label>How Many?</label>
+                                {% if character.char_weap_sec != '' %}
+                                <input class="form-control" type="number" min="1" max="10" value="{{ character.char_weap_sec_num }}" name="char_weap_sec_num">
+                                {% else %}
                                 <input class="form-control" type="number" min="1" max="10" placeholder="1" name="char_weap_sec_num">
+                                {% endif %}
                             </div>                            
                         </div>
                         <div class="form-row">
